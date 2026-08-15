@@ -1,0 +1,40 @@
+{
+  "dsxp": "0.1",
+  "device_type_id": "00000000-0000-0000-0000-000000000001",
+  "device_class": "actuator",
+  "manufacturer": "TEMPLATE",
+  "model": "TEMPLATE",
+  "revision": { "id": "template", "date": "2026-08-15", "modified_by": "" },
+
+  "actuator": {
+    "class": "generic",
+    "subtype": "",
+    "authority": "show",
+
+    "trigger": {
+      "mode": "one_shot", "reversible": false,
+      "prefire_latency_ms": null, "latency_jitter_ms": null,
+      "effect_duration_ms": null, "cooldown_ms": null, "shots": 1
+    },
+
+    "dynamics": {
+      "mass_before_kg": null, "mass_after_kg": null,
+      "cg_shift_m": [0, 0, 0],
+      "thrust_reaction_n": null, "thrust_direction": [0, 0, -1]
+    },
+
+    "hazard": {
+      "ejecta_range_m": null, "ejecta_cone_deg": null,
+      "thermal": null, "debris_fallout_m": null,
+      "sound_db_at_10m": null, "eye_hazard_class": null
+    },
+
+    "interlocks": {
+      "min_altitude_agl_m": null, "max_tilt_deg": null,
+      "requires_arm": true,
+      "auto_disarm_on": ["hard_fence_breach", "link_loss", "escalation>=land_in_place"],
+      "inhibit_zones": [],
+      "auth": null
+    }
+  }
+}

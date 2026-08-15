@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsx-format.org/schema/0.1/dsxp.schema.json",
+  "title": "DSX Device Profile (.dsxp)",
+  "description": "v0.1-draft. Declares what an aircraft or payload can do. null always means UNKNOWN and must never be treated as a default.",
+  "type": "object",
+  "required": ["dsxp", "device_type_id", "device_class", "manufacturer", "model", "revision"],
+  "properties": {
+    "dsxp": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "device_type_id": { "type": "string", "format": "uuid",
+      "description": "STABLE across all revisions of this model. Revision and firmware are separate axes." },
+    "device_class": { "enum": ["aircraft", "actuator"] },
+    "manufacturer": { "type": "string" },
+    "model": { "type": "string" },
+    "revision": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "modified_by": { "type": "string" }
+      }
+    },
+
+    "light": {
+      "type": "object",
+      "required": ["channels"],
+      "properties": {
+        "channels": { "type": "array", "items": { "enum": ["R","G","B","W","A","UV","STROBE","INTENSITY"] },
+          "description": "explicit; never inferred from a marketing description" },
+        "emitters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": { "type": "string" },
+              "luminous_flux_lm": { "type": ["number", "null"] },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "color_space": {
+          "type": "object",
+          "properties": {
+            "mode": { "type": "string" },
+            "gamma": { "type": ["number", "null"] },
+            "dimming_curve": { "type": ["string", "null"] }
+          }
+        },
+        "pwm_hz": { "type": ["number", "null"] },
+        "beam_angle_deg": { "type": ["number", "null"] }
+      }
+    },
+
+    "flight": {
+      "type": "object",
+      "properties": {
+        "max_speed_xy_ms": { "type": ["number", "null"] },
+        "max_speed_z_up_ms": { "type": ["number", "null"] },
+        "max_speed_z_down_ms": { "type": ["number", "null"] },
+        "max_accel_xy_ms2": { "type": ["number", "null"] },
+        "max_accel_z_ms2": { "type": ["number", "null"] },
+        "max_yaw_rate_dps": { "type": ["number", "null"] },
+        "min_nav_altitude_m": { "type": ["number", "null"] },
+        "endurance_s": { "type": ["number", "null"] },
+        "mass_kg": { "type": ["number", "null"] },
+        "position_accuracy_m": {
+          "type": "object",
+          "properties": {
+            "horizontal": { "type": ["number", "null"] },
+            "vertical": { "type": ["number", "null"] },
+            "requires": { "enum": ["rtk_fixed", "rtk_float", "gnss_single", null] }
+          }
+        }
+      }
+    },
+
+    "payload_slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["index"],
+        "properties": {
+          "index": { "type": "integer", "minimum": 0 },
+          "position": { "type": "string" },
+          "max_mass_kg": { "type": ["number", "null"] },
+          "interfaces": { "type": "array", "items": { "type": "string" } },
+          "power": { "type": "object" },
+          "mount": { "type": "object" }
+        }
+      }
+    },
+
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "capabilities"],
+        "properties": {
+          "name": { "type": "string" },
+          "trajectory_rate_hz": {
+            "type": "object",
+            "description": "'required' means the hardware accepts exactly this rate and does not negotiate",
+            "properties": {
+              "required": { "type": ["number", "null"] },
+              "min": { "type": ["number", "null"] },
+              "max": { "type": ["number", "null"] }
+            }
+          },
+          "light_rate_hz": { "type": "object" },
+          "channels": { "type": "array", "items": { "type": "string" } },
+          "capabilities": { "type": "array", "items": { "type": "string" },
+            "description": "prefixed strings, never a bitmask" }
+        }
+      }
+    },
+
+    "firmware": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["range", "modes"],
+        "properties": {
+          "range": { "type": "string" },
+          "modes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+
+    "actuator": {
+      "type": "object",
+      "required": ["class", "authority", "trigger"],
+      "properties": {
+        "class": { "enum": ["pyro","recovery","dispenser","smoke","flame","laser","audio","gimbal","release","generic"] },
+        "subtype": { "type": "string" },
+        "authority": { "enum": ["show", "safety"],
+          "description": "show = never triggered by the safety chain; safety = never placed on the show timeline" },
+        "trigger": {
+          "type": "object",
+          "required": ["mode"],
+          "properties": {
+            "mode": { "enum": ["one_shot", "repeatable", "continuous"] },
+            "reversible": { "type": "boolean" },
+            "prefire_latency_ms": { "type": ["number", "null"] },
+            "latency_jitter_ms": { "type": ["number", "null"] },
+            "effect_duration_ms": { "type": ["number", "null"] },
+            "cooldown_ms": { "type": ["number", "null"] },
+            "shots": { "type": ["integer", "null"] }
+          }
+        },
+        "dynamics": {
+          "type": "object",
+          "properties": {
+            "mass_before_kg": { "type": ["number", "null"] },
+            "mass_after_kg": { "type": ["number", "null"] },
+            "cg_shift_m": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+            "thrust_reaction_n": { "type": ["number", "null"] },
+            "thrust_direction": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 }
+          }
+        },
+        "hazard": {
+          "type": "object",
+          "properties": {
+            "ejecta_range_m": { "type": ["number", "null"] },
+            "ejecta_cone_deg": { "type": ["number", "null"] },
+            "thermal": { "type": ["boolean", "null"] },
+            "debris_fallout_m": { "type": ["number", "null"] },
+            "sound_db_at_10m": { "type": ["number", "null"] },
+            "eye_hazard_class": { "type": ["string", "null"] }
+          }
+        },
+        "interlocks": {
+          "type": "object",
+          "properties": {
+            "min_altitude_agl_m": { "type": ["number", "null"] },
+            "max_tilt_deg": { "type": ["number", "null"] },
+            "requires_arm": { "type": "boolean" },
+            "auto_disarm_on": { "type": "array", "items": { "type": "string" } },
+            "inhibit_zones": { "type": "array", "items": { "type": "string" } },
+            "auth": { "type": ["string", "null"] }
+          }
+        }
+      }
+    }
+  },
+
+  "allOf": [
+    {
+      "if": { "properties": { "device_class": { "const": "aircraft" } }, "required": ["device_class"] },
+      "then": { "required": ["light", "flight", "modes"] }
+    },
+    {
+      "if": { "properties": { "device_class": { "const": "actuator" } }, "required": ["device_class"] },
+      "then": { "required": ["actuator"] }
+    }
+  ]
+}

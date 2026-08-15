@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsx-format.org/schema/0.1/dsx.schema.json",
+  "title": "DSX Show Manifest (show.json)",
+  "description": "v0.1-draft. Covers the core manifest. Payload, termination and integrity objects are referenced sub-schemas.",
+  "type": "object",
+  "required": ["dsx", "profile", "show", "frame", "time", "drones"],
+  "additionalProperties": true,
+  "properties": {
+    "dsx": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "profile": { "enum": ["L0", "L1", "L2"] },
+
+    "show": {
+      "type": "object",
+      "required": ["title", "duration_ms"],
+      "properties": {
+        "title": { "type": "string" },
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "acts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "from_ms", "to_ms"],
+            "properties": {
+              "id": { "type": "string" },
+              "from_ms": { "type": "integer", "minimum": 0 },
+              "to_ms": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "audio": {
+          "type": "object",
+          "required": ["file", "media_type"],
+          "properties": {
+            "file": { "type": "string" },
+            "media_type": { "type": "string",
+              "description": "REQUIRED so that transcoding needs are visible; some targets accept audio/mpeg only" },
+            "offset_ms": { "type": "integer" },
+            "sync": { "enum": ["gnss", "timecode", "manual"] }
+          }
+        }
+      }
+    },
+
+    "frame": {
+      "type": "object",
+      "description": "REQUIRED at every profile. No field here has a default.",
+      "required": ["type", "handedness", "origin", "bearing_deg"],
+      "properties": {
+        "type": { "enum": ["ENU", "NED"] },
+        "handedness": { "enum": ["right", "left"] },
+        "units": { "const": "m" },
+        "bearing_deg": { "type": "number", "minimum": -360, "maximum": 360 },
+        "origin": {
+          "type": "object",
+          "required": ["lat", "lon", "alt_m", "alt_ref"],
+          "properties": {
+            "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+            "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+            "alt_m": { "type": "number" },
+            "alt_ref": { "enum": ["AGL", "AMSL", "ELLIPSOID", "TAKEOFF"] },
+            "geoid": { "type": ["string", "null"] },
+            "datum": { "type": "string", "default": "WGS84" }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "alt_ref": { "const": "AMSL" } },
+                      "required": ["alt_ref"] },
+              "then": { "required": ["geoid"],
+                        "properties": { "geoid": { "type": "string" } } }
+            }
+          ]
+        }
+      }
+    },
+
+    "time": {
+      "type": "object",
+      "required": ["base", "start"],
+      "properties": {
+        "base": { "const": "ms" },
+        "start": {
+          "type": "object",
+          "required": ["mode"],
+          "properties": { "mode": { "enum": ["gnss_tow", "countdown", "external"] } }
+        },
+        "timecode": {
+          "type": "object",
+          "properties": {
+            "smpte": { "enum": ["24", "25", "29.97", "30"] },
+            "offset_ms": { "type": "integer" }
+          }
+        },
+        "time_source": {
+          "type": "object",
+          "properties": {
+            "primary": { "enum": ["gnss", "rtc", "external"] },
+            "holdover": {
+              "type": "object",
+              "properties": {
+                "source": { "type": ["string", "null"] },
+                "max_drift_ms_per_min": { "type": ["number", "null"],
+                  "description": "null = not characterised. No public source documents this; do not invent a value." },
+                "on_exceed": { "enum": ["hold", "land_in_place", "continue"] }
+              }
+            },
+            "fallback": { "enum": ["countdown", "none"] }
+          }
+        }
+      }
+    },
+
+    "fleet": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "device_profile", "device_type_id", "device_mode"],
+        "properties": {
+          "id": { "type": "string" },
+          "count": { "type": "integer", "minimum": 1 },
+          "device_profile": { "type": "string",
+            "description": "relative path inside the archive; external references are not permitted" },
+          "device_type_id": { "type": "string", "format": "uuid" },
+          "device_mode": { "type": "string" },
+          "min_firmware": { "type": ["string", "null"] },
+          "declared_envelope": {
+            "type": "object",
+            "description": "measured demand of THIS show; compared against the device profile limits",
+            "properties": {
+              "peak_speed_xy_ms": { "type": "number" },
+              "peak_speed_z_up_ms": { "type": "number" },
+              "peak_speed_z_down_ms": { "type": "number" },
+              "peak_accel_xy_ms2": { "type": "number" },
+              "peak_accel_z_ms2": { "type": "number" },
+              "peak_yaw_rate_dps": { "type": "number" },
+              "min_separation_m": { "type": "number", "exclusiveMinimum": 0 },
+              "uses_channels": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+
+    "drones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "fleet", "home"],
+        "properties": {
+          "id": { "type": ["integer", "string"] },
+          "fleet": { "type": "string" },
+          "serial": { "type": ["string", "null"],
+            "description": "mapping show id -> physical airframe; absent from all existing formats" },
+          "slot": { "type": ["string", "null"] },
+          "home": {
+            "type": "object",
+            "required": ["x", "y", "z", "heading_deg"],
+            "description": "home heading is REQUIRED: it is not reconstructable from delta-encoded trajectories",
+            "properties": {
+              "x": { "type": "number" }, "y": { "type": "number" },
+              "z": { "type": "number" }, "heading_deg": { "type": "number" }
+            }
+          },
+          "trajectory": { "type": "string" },
+          "trajectory_sampled": { "type": ["string", "null"] },
+          "light": { "type": "string" },
+          "yaw": { "type": ["string", "null"] },
+          "payloads": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["slot", "device_profile", "device_type_id"],
+              "properties": {
+                "slot": { "type": "integer", "minimum": 0 },
+                "device_profile": { "type": "string" },
+                "device_type_id": { "type": "string", "format": "uuid" },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["t_ms", "action"],
+                    "properties": {
+                      "t_ms": { "type": "integer", "minimum": 0 },
+                      "action": { "enum": ["arm", "disarm", "fire", "on", "off"] },
+                      "channel": { "type": "integer", "minimum": 0 }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "takeoff": {
+      "type": "object",
+      "properties": {
+        "grid": { "type": "string" },
+        "spacing_m": { "type": "number", "exclusiveMinimum": 0 },
+        "batches": {
+          "type": "array",
+          "description": "staggered takeoff; no existing format models this",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "drones": { "type": "array", "items": { "type": ["integer", "string"] } },
+              "offset_ms": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+
+    "safety": { "type": "object" },
+    "termination": { "$ref": "termination.schema.json" },
+    "position_integrity": { "type": "object" },
+    "interference_policy": { "type": "object" },
+    "environment_envelope": { "type": "object" },
+    "ground_zones": { "type": "object" },
+
+    "extensions_used": { "type": "array", "items": { "type": "string" } },
+    "extensions_required": { "type": "array", "items": { "type": "string" } },
+    "regulatory_profiles": { "type": "array", "items": { "type": "string" } },
+
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "created_by": { "type": "object" },
+        "content_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "validated_by": { "type": "object" },
+        "signature": { "type": "object" }
+      }
+    }
+  },
+
+  "allOf": [
+    {
+      "if": { "properties": { "profile": { "const": "L2" } }, "required": ["profile"] },
+      "then": { "required": ["termination", "provenance", "fleet"] }
+    },
+    {
+      "if": { "properties": { "profile": { "const": "L1" } }, "required": ["profile"] },
+      "then": { "required": ["fleet", "safety"] }
+    }
+  ]
+}

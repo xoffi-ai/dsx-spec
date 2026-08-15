@@ -1,0 +1,26 @@
+{
+  "dsx": "0.1",
+  "profile": "L0",
+  "show": { "title": "Minimal L0 example", "duration_ms": 10000 },
+  "frame": {
+    "type": "ENU",
+    "handedness": "right",
+    "units": "m",
+    "bearing_deg": 0.0,
+    "origin": {
+      "lat": 22.5431, "lon": 114.0579,
+      "alt_m": 12.4, "alt_ref": "AMSL", "geoid": "EGM2008", "datum": "WGS84"
+    }
+  },
+  "time": { "base": "ms", "start": { "mode": "countdown" } },
+  "drones": [
+    { "id": 1, "fleet": "default",
+      "home": { "x": 0.0, "y": 0.0, "z": 0.0, "heading_deg": 0.0 },
+      "trajectory_sampled": "traj/0001.json", "light": "light/0001.json" },
+    { "id": 2, "fleet": "default",
+      "home": { "x": 5.0, "y": 0.0, "z": 0.0, "heading_deg": 0.0 },
+      "trajectory_sampled": "traj/0002.json", "light": "light/0002.json" }
+  ],
+  "extensions_used": [],
+  "extensions_required": []
+}

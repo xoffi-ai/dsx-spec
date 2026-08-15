@@ -1,0 +1,8 @@
+*.dsx
+*.dsb
+!examples/**/*.dsx
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+node_modules/

@@ -1,0 +1,39 @@
+{
+  "dsxp": "0.1",
+  "device_type_id": "00000000-0000-0000-0000-000000000000",
+  "device_class": "aircraft",
+  "manufacturer": "TEMPLATE",
+  "model": "TEMPLATE",
+  "revision": { "id": "template", "date": "2026-08-15", "modified_by": "" },
+
+  "light": {
+    "channels": ["R", "G", "B"],
+    "emitters": [
+      { "channel": "R", "luminous_flux_lm": null, "source": "" },
+      { "channel": "G", "luminous_flux_lm": null, "source": "" },
+      { "channel": "B", "luminous_flux_lm": null, "source": "" }
+    ],
+    "color_space": { "mode": "sRGB", "gamma": null, "dimming_curve": null },
+    "pwm_hz": null,
+    "beam_angle_deg": null
+  },
+
+  "flight": {
+    "max_speed_xy_ms": null, "max_speed_z_up_ms": null, "max_speed_z_down_ms": null,
+    "max_accel_xy_ms2": null, "max_accel_z_ms2": null, "max_yaw_rate_dps": null,
+    "min_nav_altitude_m": null, "endurance_s": null, "mass_kg": null,
+    "position_accuracy_m": { "horizontal": null, "vertical": null, "requires": null }
+  },
+
+  "payload_slots": [],
+
+  "modes": [
+    { "name": "rgb-default",
+      "trajectory_rate_hz": { "required": null, "min": null, "max": null },
+      "light_rate_hz": { "required": null, "min": null, "max": null },
+      "channels": ["R", "G", "B"],
+      "capabilities": ["dsx.core", "dsx.light.rgb"] }
+  ],
+
+  "firmware": []
+}
