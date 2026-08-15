@@ -45,7 +45,9 @@ XML form, which is directly embeddable.
 
 | # | Question |
 |---|---|
-| A15 | The three-letter name "DSX" collides with existing marks in adjacent classes. Registrable subject matter is expected to be the compound wordmark and the conformance badge rather than the bare letters. Fallback candidates: `ODSX`, `OpenDSX`. To be resolved **before** external implementers depend on the name. |
+| A15 | **Searched 2026-08-15; result is not encouraging.** "DSX" is a crowded acronym: EUTM 017940461 (DSX Holdings Ltd) is a live *word mark* covering computer software, electronic publications and computer programming; US Reg. 2679754 (DSX Access Systems) is incontestable in class 9; DSX-1/DSX-3 is generic in telecoms; `.dsx` is already used by four unrelated formats. Registering "DSX" is therefore **not** a viable plan. Full findings and the proposed split — unprotected format name, separately coined certification mark, per the IEEE 802.11 / Wi-Fi precedent — are in [`TRADEMARK.md`](../TRADEMARK.md). |
+| A15a | **China is unverified and is the urgent gap.** CNIPA was not reachable from the search environment. China is first-to-file, examines relative grounds *ex officio*, and is where the manufacturers and the intended steward are. A local knock-out search in classes 9 and 42 is needed **before** any public announcement, and its result may still force a rename. |
+| A15b | The certification-programme name has not been coined. It must be a distinctive invented word cleared in EU, US and CN, and registered as a **certification mark** — whose owner may not itself sell the certified goods and must apply the standard even-handedly. That constraint is a feature: it makes the neutrality claim in `GOVERNANCE.md` legally enforceable rather than merely promised. |
 
 ## Rotation operation (section 10)
 

@@ -7,8 +7,9 @@ organisation. That is a starting condition, not a destination.
 
 > **Stewardship pledge.** Once **three independent implementers** (organisations
 > other than the initial editor) have shipped a DSX reader or writer, the
-> specification, the schemas, the conformance suite and the trademark will be
-> transferred to a **neutral steward** — a working group, an industry
+> specification, the schemas, the conformance suite and any marks the project
+> holds by then will be transferred to a **neutral steward** — a working group,
+> an industry
 > association, or an established standards body (candidates: ASTM F38 /
 > committee item WK95240, the Shenzhen UAV Industry Association, or a purpose-
 > formed consortium). The reference implementation may remain with its authors.
@@ -97,6 +98,18 @@ format, and never invalidates existing archived files.
 
 ## 8. Conformance and the badge
 
-The conformance suite in `conformance/` is normative. The trademark exists for
-one purpose: to make "DSX conformant" a statement that can be checked. Passing
-implementations may use the badge; the suite and its results are public.
+The conformance suite in `conformance/` is normative. Its purpose is to make
+"DSX conformant" a statement that can be checked rather than asserted. The suite
+and its results are public, so any claim can be falsified by anyone.
+
+**There is no badge yet, because there is no mark to back one.** A knock-out
+search found "DSX" to be a crowded acronym with a live EU word mark covering
+software and electronic publications, and the position in China — the market
+that matters most here — is unverified. The findings and the consequences are in
+[`TRADEMARK.md`](TRADEMARK.md). Until a certification mark exists and is
+cleared, conformance rests on the public suite and on the ordinary law against
+misrepresenting a product, not on trademark enforcement.
+
+This is stated plainly because the alternative — implying a badge programme that
+cannot be enforced — would be the same kind of claim this project criticises
+others for making.

@@ -2,13 +2,40 @@
 
 ## Unreleased
 
-### Changed (fresh-eyes review round)
-- **Licensing corrected before publication.** The spec licence no longer names
-  OWFa 1.0 — an executory agreement that binds no one when merely listed in a
-  repository. Specification text is now dual-licensed **CC BY 4.0 OR
-  Apache-2.0**, with the patent grant supplied by Apache-2.0 §3, and
-  CONTRIBUTING states the inbound = outbound convention explicitly.
-  `LICENSE-SPEC.md` records why the earlier wording was wrong.
+### Changed (licensing and trademark round)
+- **Specification licence is now the Community Specification License 1.0**
+  (SPDX `Community-Spec-1.0`), reproduced verbatim in
+  `licenses/Community-Spec-1.0.md`. This is the *third* attempt and the first
+  correct one. OWFa 1.0 had the right patent scope but is an executory
+  agreement that binds nobody when merely listed in a repository. The
+  replacement — CC BY 4.0 **or** Apache-2.0 — was worse in a subtler way:
+  Apache-2.0 §3 licenses patents to "otherwise transfer **the Work**", and
+  where the Work is a document, that arguably covers redistributing the
+  document rather than implementing it. CSL §9.8 licenses "making, using,
+  selling, offering for sale, importing or distributing any **implementation**
+  of the Specification" and is accepted by shipping the licence or by a pull
+  request to `NOTICES.md` — right scope, workable delivery. Code remains
+  Apache-2.0 (CSL §4). CC BY is no longer offered for the specification: it
+  grants no patent rights, so offering it let an implementer take the
+  copyright and leave the patent peace behind.
+- **`SCOPE.md` added** — operative under CSL §9.13. It bounds every
+  contributor's and licensee's patent commitment: the data format, its
+  semantics and its conformance criteria are in; flight control, deconfliction
+  algorithms, radio protocols, authoring tools and hardware are out. Without
+  this file each contributor's commitment would shrink to their own
+  contributions.
+- **`NOTICES.md` added** — licence acceptance (CSL §2.1.3.3), patent
+  exclusions (§3) and withdrawals (§2.3).
+- **`TRADEMARK.md` added, and the trademark claim withdrawn.** A knock-out
+  search found EUTM 017940461 — a live *word mark* for "DSX" covering computer
+  software, computer programs and electronic publications (classes 9, 35, 36,
+  42) — plus incontestable US Reg. 2679754 in class 9, generic use of DSX-1/
+  DSX-3 in telecoms, and four unrelated formats already using the `.dsx`
+  extension. **China was not verifiable and is the urgent gap.** Documents no
+  longer assert rights in "the name DSX, the DSX logo, or the DSX conformance
+  badge"; none of those rights exist. The proposed split follows the IEEE
+  802.11 / Wi-Fi precedent: leave the format name unprotected, coin and
+  register a separate **certification mark** for the badge.
 - **"Clean room" renamed to what it actually is.** The provenance notice is
   now titled *Separation of Roles*: GPL source was read to establish
   observable facts, so the process is a one-way wall (spec yes, implementation

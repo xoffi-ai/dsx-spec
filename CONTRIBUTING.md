@@ -28,11 +28,20 @@ contribution. Sections that cannot be defended get corrected, not defended.
 1. **Sign off your commits** (`git commit -s`) — Developer Certificate of
    Origin 1.1. No CLA.
 2. **Inbound = outbound.** A contribution is licensed under the repository's
-   licences. For specification text that is CC BY 4.0 **and** Apache-2.0 —
-   the latter including the patent grant of its §3, which is what makes this
-   specification implementable by industry. If you cannot grant that (e.g.
-   your employer holds relevant patents), say so in the pull request; the
-   contribution will be discussed openly, not silently dropped.
+   licences: specification text under the **Community Specification License
+   1.0**, code under **Apache-2.0**. By contributing specification text you
+   become a Contributor under CSL §9.4 and grant the patent licence in §2.1.1
+   for material within [`SCOPE.md`](SCOPE.md) — that grant covers *implementing*
+   the specification, which is what makes it usable by industry.
+
+   Note that signing off under the DCO certifies **origin only** and conveys no
+   licence by itself; the grants come from CSL §9.4 and Apache-2.0 §5.
+
+   If you cannot grant that (e.g. your employer holds relevant patents), you
+   have two honest options: say so in the pull request, or file an Exclusion
+   Notice in [`NOTICES.md`](NOTICES.md) within 45 days under CSL §3. Either way
+   it is discussed openly, not silently dropped. What is not acceptable is
+   contributing while holding back a claim you know is necessary.
 3. **Cite sources for factual claims.** Numbers in this repository — separation
    distances, wind limits, latencies, altitude thresholds — must be traceable
    to a document, a datasheet, or a described measurement. An unsourced number

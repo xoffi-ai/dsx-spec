@@ -94,15 +94,23 @@ tools/         observe_skyb.py — byte-level inspection used to write Appendix 
 
 | Part | License | Rationale |
 |---|---|---|
-| Specification, schemas, examples | **CC BY 4.0 OR Apache-2.0** | CC BY for documentation use; Apache-2.0 supplies the patent grant (§3) that vendor legal departments require |
-| Code, schemas as used in software, reference tools | **Apache-2.0** | embeddable in proprietary firmware; includes a patent grant |
-| The name "DSX" and the conformance badge | trademark, held by the steward | anyone may implement; only those who pass the conformance suite may *call* it DSX |
+| Specification, schemas, examples, device profiles | **Community Specification License 1.0** (`Community-Spec-1.0`) | its patent grant covers *implementing* the specification (§9.8), which is the whole point and which a software licence does not reliably give |
+| Code, reference tools, conformance suite | **Apache-2.0** | embeddable in proprietary firmware; patent grant whose scope genuinely fits code |
+| The name "DSX" and the conformance badge | **no trademark is held — see [`TRADEMARK.md`](TRADEMARK.md)** | anyone may implement; conformance is defined by the public suite, not by a mark we do not own |
+
+Two related files are operative, not commentary: [`SCOPE.md`](SCOPE.md) bounds
+the patent commitment, [`NOTICES.md`](NOTICES.md) is where implementers accept
+the licence and contributors file exclusions.
 
 Explicitly **not GPL**: a reference implementation under GPLv3 cannot be
 embedded in the proprietary firmware that has to read the format, and a
 standard whose reference code its own audience cannot link is a standard with
 an adoption ceiling. This is a statement about licence mechanics, not about any
 particular vendor's decisions. Explicitly **not MIT**: no patent grant.
+Explicitly **not Apache-2.0 for the specification text**: its §3 licenses
+patents to "otherwise transfer **the Work**" — the document — not to implement
+what the document describes. [`LICENSE-SPEC.md`](LICENSE-SPEC.md) records that
+this project got that wrong twice before getting it right.
 
 ## Contributing — and a promise
 
