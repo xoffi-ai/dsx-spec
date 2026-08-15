@@ -15,6 +15,9 @@ jobs:
       # cryptography is not optional in CI: a skipped signature check
       # would otherwise report a green run that verified nothing.
       - run: pip install jsonschema referencing cryptography
+      # First: the archive must be safe to open at all (spec 2.1.1/2.1.2).
+      # Every check after this one assumes the container has been vetted.
+      - run: python3 conformance/check_container.py
       - run: python3 conformance/run_schema_checks.py
       - run: python3 conformance/check_rotation.py
       - run: python3 conformance/check_archive.py

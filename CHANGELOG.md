@@ -2,6 +2,44 @@
 
 ## Unreleased
 
+### Added (container security, 2026-08-16)
+
+- **A33 resolved — §2.1.1 "Entry names" and §2.1.2 "Resource limits" added.**
+  Rules C1–C3 (relative paths only, no `.`/`..` component, no control
+  characters, valid UTF-8), C4/C5 (no duplicate and no NFC-casefold-colliding
+  entry names), C6 (regular files and directories only). All are REJECT: a
+  violating archive must not be parsed, and must not be repaired, because every
+  repair is a guess about which reading the author meant.
+- **C4/C5 close a signature bypass against §2.3.1, and the bypass is now
+  demonstrated rather than described.** `check_container.py` builds an archive
+  carrying `show.json` twice; the same Python standard library hashes the first
+  occurrence and parses the last, so the signature covers a 20 m minimum
+  separation while the parsed manifest declares 2 m. §2.3.1 step 3 now states
+  that C4/C5 are a precondition of the digest.
+- New `tools/dsx_container.py` (reference implementation) and
+  `conformance/check_container.py` (20 checks), wired into CI **first**, since
+  every later suite assumes a vetted container.
+
+### Changed (two corrections found while writing the above)
+
+- **The per-entry compression-ratio limit was specified and then withdrawn.**
+  DEFLATE cannot exceed roughly 1032:1 on any input (measured 1028.6:1 on
+  50 MB), so a cap below that bound rejects legitimate content — the
+  `continuous-l2` example's near-silent audio track reaches 243:1 and was
+  rejected by the first draft's 200:1 rule — and a cap above it never fires.
+  §2.1.2 now says so explicitly, because a ratio cap is the conventional
+  advice and its absence would otherwise look like an oversight.
+- **The total-size limit counts bytes actually produced during decompression**,
+  not the sizes declared in the ZIP central directory, which are the writer's
+  claim rather than a measurement. A declared size that does not match the
+  stream is reported as a stated reason for rejection instead of surfacing as a
+  `BadZipFile` at the caller.
+- `check_container.py`'s negative checks assert *which entry* tripped a rule.
+  Without that, the first C6 check passed while the implementation was in fact
+  rejecting every ordinary archive: Python's own writer stores permission bits
+  with the file-type bits clear, and testing `S_ISREG()` directly treated that
+  as "not a regular file". C6 now judges only when `S_IFMT` is present.
+
 ### Changed (sampler audit and appendix-B anonymisation round, 2026-08-15)
 
 - **A1, A31, A32 resolved — §4.2/§4.3/§4.4 are now specified completely, and

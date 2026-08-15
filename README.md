@@ -31,7 +31,7 @@ Every drone show format in use today is in one of two states:
 | **.skyc / .skyb** | source-readable (GPL), no public spec | yes | no |
 | **.dac, .bin, .path/.path3, .essp, vendor .json variants, .packedshow, .ddsf** | no public specification located [^located] | yes | no |
 | **CSV** | trivially open | partially | no |
-| **DSX** | **yes** | designed for it — **not yet flown** | schema + §10 rules + sampler vectors, all tested today |
+| **DSX** | **yes** | designed for it — **not yet flown** | container, schema, §10 rules and sampler vectors, all tested today |
 
 There is currently **no open format that is both flight-capable and
 independently verifiable**. That is the gap DSX exists to close — and the last
@@ -98,10 +98,11 @@ profiles/      regulatory overlays — planned, currently a README stating the
                intended identifiers; no overlay is written
 examples/      minimal-l0, rotation-l2, continuous-l2 (show-l1 and pyro-l2 are
                named in examples/README.md but not yet written)
-conformance/   what exists: schema checks, the semantic rules of §10, archive
-               integrity and the normative sampler (5 vectors). Round-trip and
-               determinism suites do not exist yet, so "DSX conformant" is not
-               yet a claim anyone can earn end to end
+conformance/   what exists: container safety (§2.1.1/§2.1.2), schema checks,
+               the semantic rules of §10, archive integrity and the normative
+               sampler (5 vectors). Round-trip and determinism suites do not
+               exist yet, so "DSX conformant" is not yet a claim anyone can
+               earn end to end
 proposals/     change proposals (see proposals/TEMPLATE.md)
 tools/         dsx_sample.py — reference sampler for §4.4, the normative
                reduction to t,x,y,z,R,G,B; dsx_seal.py — content hash and
