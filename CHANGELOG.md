@@ -2,6 +2,48 @@
 
 ## Unreleased
 
+### Added (the L1 reference example -- A38 closed, 2026-08-16)
+
+- **`examples/show-l1/`**: the reference example for the profile most
+  implementations will actually target. Eight aircraft, 120 s, one trivial
+  figure (climb, transit, circle, return) so that an importer can be checked
+  against it *by hand*. It exercises every construct §1.3 names for L1 --
+  segment trajectories, light programs, flight limits, soft and hard geofence,
+  takeoff grid, RTH, device-profile binding -- and deliberately nothing above
+  it: no yaw, no payloads, no waves, no sorties. The gap it closes was real:
+  L0 was trivial and both other examples were L2, so the middle profile had no
+  worked file at all.
+- **`check_archive.py` now discovers example directories instead of iterating
+  a hard-coded list.** A hand-maintained list is how a new example ships
+  unchecked -- which is precisely what had happened: `show-l1` existed on disk
+  and no suite looked at it.
+
+### Added (whitepaper 01 -- "Termination is Data", 2026-08-16)
+
+- **`whitepaper/01-termination-is-data.md`**: the argument for the safety
+  envelope living in the file, addressed to industry associations, authorities
+  and manufacturers rather than to implementers. `spec/07` remains normative
+  and governs wherever the two differ.
+- The Orlando 2024 accident is read as **four data problems** (non-transferred
+  parameter file, 7 deg frame rotation, an unchecked fence scalar, an abort path
+  too expensive to use), each mapped to the field that would have made it
+  checkable before the countdown -- rather than as a list of operator errors.
+  **No operator, aircraft type or software product is named**, per
+  NOTICE-PROVENANCE §5.
+- §5 is a table of **what is not checkable yet** (no `.dsb` encoding, no fall
+  model, single-action abort not file-verifiable, no DSX file has ever flown)
+  and says so in the document itself. §4 lists what DSX deliberately does *not*
+  require, and why a specification nobody can conform to on day one is a
+  specification that gets ignored.
+- **Order 761 mapped article by article** (Art. 6, 26, 27(7)(9)(11), 31 para 2(5),
+  32(2)(4), 39 para 3) against DSX fields, from the primary text on `gov.cn`.
+  Art. 39 para 3 places an emergency-function duty on *manufacturers* that is
+  currently discharged by assertion; a device profile bound to a show file is
+  the artefact that would discharge it with evidence.
+- Sources are marked **primary** or **secondary**, and the one claim that could
+  not be re-verified for this draft (municipal air-gap requirement) carries a
+  footnote saying so, with the condition for keeping the paragraph.
+
 ### Added (yaw and the profile matrix -- A34 closed, 2026-08-16)
 
 - **§4.2.5 specifies yaw.** It was advertised in §1.3 as an L2 feature and

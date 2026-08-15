@@ -96,7 +96,7 @@ devices/       device profiles (.dsxp): two templates and one worked example
                (vendor-contributed profiles are invited, none exist yet)
 profiles/      regulatory overlays — planned, currently a README stating the
                intended identifiers; no overlay is written
-examples/      minimal-l0, rotation-l2, continuous-l2 (show-l1 and pyro-l2 are
+examples/      minimal-l0, show-l1, rotation-l2, continuous-l2 (pyro-l2 is
                named in examples/README.md but not yet written)
 conformance/   what exists: container safety (§2.1.1/§2.1.2), schema checks,
                the semantic rules of §10, archive integrity and the normative
@@ -107,6 +107,9 @@ translations/  zh-Hans, ja, ko, de, es. English is the sole authoritative
                language; translations are informative and carry the hash of
                the English source they were made from, so drift is detected
                rather than discovered. See TRANSLATIONS.md
+whitepaper/    01-termination-is-data.md — why the safety envelope belongs in
+               the file, written for associations and authorities rather than
+               implementers; spec/07 governs where the two differ
 proposals/     change proposals (see proposals/TEMPLATE.md)
 tools/         dsx_sample.py — reference sampler for §4.4, the normative
                reduction to t,x,y,z,R,G,B; dsx_seal.py — content hash and
