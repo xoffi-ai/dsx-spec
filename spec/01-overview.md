@@ -31,16 +31,39 @@ that authority.
 
 ## 1.3 Conformance profiles
 
-| Profile | Contains | Intended for |
+| Profile | Adds | Intended for |
 |---|---|---|
 | **L0 — Sampled** | sampled position tracks + RGB, time base, coordinate frame | simple controllers, CSV-equivalent exchange |
 | **L1 — Show** | L0 + segment trajectories, light programs, flight limits, geofence, takeoff grid, RTH, device profile binding | the normal case |
 | **L2 — Production** | L1 + yaw, payloads and actuators, multi-fleet, audio sync, termination policy, GNSS integrity policy, provenance signature | pyrotechnics, mixed fleets, regulated operation |
 
+The table above says what each profile is *for*. It does not decide any
+individual file: which members are required, optional or forbidden at a given
+profile is stated **member by member in [Appendix C](C-profile-matrix.md), which
+is normative**. Where this table and Appendix C can be read differently,
+Appendix C governs — "L1 adds the takeoff grid" describes the profile's purpose
+and does not by itself make `takeoff` mandatory.
+
+Appendix C is generated from `profiles/profile-matrix.json`, and
+`conformance/check_profiles.py` proves each cell against the schema by deleting
+or inserting the member in a real reference file and checking that the schema
+notices. A profile rule that lives only in prose is a rule that ships broken.
+
 A reader declares the highest profile it implements. A reader **MUST** be able
 to load any file of its declared profile or lower, and **MUST** apply the error
 semantics of §5.6 to anything above it — that is, it must fail safely rather
 than silently ignore data it does not understand.
+
+Profiles are **cumulative**: no member goes from REQUIRED at a lower profile to
+FORBIDDEN at a higher one. The converse happens — `drones[].trajectory_sampled`
+is REQUIRED at L0, because an L0 file has no other way to carry a trajectory,
+and merely OPTIONAL above it, where the sampled track is a derived cache.
+
+A file declaring **L0 MUST NOT** carry a segment trajectory or `roles`. This is
+not tidiness: where both a segment track and a sampled track exist, §4.1 makes
+the segment track authoritative, and an L0 reader — which by definition cannot
+evaluate segments — would fly the derived cache while believing it flies the
+file.
 
 ## 1.4 The interoperability guarantee
 

@@ -1,0 +1,703 @@
+{
+  "$comment": "DSX v0.1-draft -- the normative profile matrix (spec Appendix C, closing A34). This file is the SOURCE: spec/C-profile-matrix.md is generated from it by tools/gen_profile_matrix.py, and conformance/check_profiles.py checks every cell against schema/dsx.schema.json and the reference examples. Profile applicability used to be scattered across 1.3, 2.3, 3, 7.1.1 and 10.9; where a statement in those sections and a cell here disagree, that is a bug in one of them and the checker is expected to find it.",
+  "matrix_version": "0.1",
+  "dsx_version": "0.1",
+  "status_values": {
+    "REQUIRED": "the member MUST be present in a file declaring this profile; its absence is REJECT (5.6)",
+    "OPTIONAL": "the member MAY be present; a reader of this profile MUST understand it if it is",
+    "FORBIDDEN": "the member MUST NOT be present in a file declaring this profile; its presence is REJECT (5.6). A file that needs it declares a higher profile",
+    "CONDITIONAL": "presence depends on a condition stated in the entry; the condition, not the profile alone, decides"
+  },
+  "members": [
+    {
+      "path": "dsx",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "the format version. A file without it is not a DSX file.",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "profile",
+      "scope": "manifest",
+      "section": "1.3",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "the declared profile is what this whole matrix is indexed by; it can have no default.",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "show",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "show.title",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "show.duration_ms",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "REQUIRED as a member, but null where the show is open-ended (R10.24). Null suspends the 1.4 guarantee (A25).",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "show.acts",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "show.audio",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "1.3 lists 'audio sync' under L2. What is L2-specific is synchronising flight to it (sync: gnss); carrying a track is not, and an L0 consumer that ignores audio still flies the correct show."
+    },
+    {
+      "path": "show.notes",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "frame",
+      "scope": "manifest",
+      "section": "3",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "3: REQUIRED at every profile, including L0. Positions without a frame are not positions.",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "time",
+      "scope": "manifest",
+      "section": "3",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "time.time_source",
+      "scope": "manifest",
+      "section": "3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "OPTIONAL at L2 in v0.1, not REQUIRED: the holdover policy is specified but not yet mandated, and one of the two L2 reference files omits it. See A39."
+    },
+    {
+      "path": "fleet",
+      "scope": "manifest",
+      "section": "5",
+      "L0": "OPTIONAL",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "device-profile binding starts at L1 (1.3). At L0 there is no binding, so drones[].fleet is a free-text group label; from L1 it MUST resolve to a fleet entry -- checked, not assumed.",
+      "enforced": {
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "drones",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "drones[].id",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "drones[].fleet",
+      "scope": "manifest",
+      "section": "5",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "label at L0, reference at L1 and above (see fleet).",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "drones[].home",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "REQUIRED",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "drones[].serial",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "drones[].slot",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "drones[].group",
+      "scope": "manifest",
+      "section": "10",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "drones[].trajectory",
+      "scope": "manifest",
+      "section": "4.1",
+      "L0": "FORBIDDEN",
+      "L1": "CONDITIONAL",
+      "L2": "CONDITIONAL",
+      "condition": "REQUIRED unless the aircraft flies roles (10): a rotation file carries the choreography in roles[].trajectory and the airframe inherits it through an assignment.",
+      "note": "FORBIDDEN at L0 because the segment track is authoritative where both exist (4.1). An L0 reader cannot evaluate segments, so it would silently fly the derived cache while the file says something else.",
+      "enforced": {
+        "L0": "schema"
+      }
+    },
+    {
+      "path": "drones[].trajectory_sampled",
+      "scope": "manifest",
+      "section": "4.1",
+      "L0": "REQUIRED",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "the only trajectory form an L0 file may carry; above L0 it is a derived cache that a validator MUST check against 4.4.",
+      "enforced": {
+        "L0": "schema"
+      }
+    },
+    {
+      "path": "drones[].light",
+      "scope": "manifest",
+      "section": "4.5",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "at L0 the referenced program MUST be limited to R, G and B: a channel an L0 consumer cannot represent does not belong in a file that declares L0."
+    },
+    {
+      "path": "drones[].payloads",
+      "scope": "manifest",
+      "section": "6",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "note": "payloads and actuators are L2 (1.3). A reader below L2 has no arm/disarm state machine, and a payload it ignores is a payload nobody is holding.",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "drones[].battery_policy",
+      "scope": "manifest",
+      "section": "10",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "drones[].sorties",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "CONDITIONAL",
+      "L1": "CONDITIONAL",
+      "L2": "OPTIONAL",
+      "condition": "at most one sortie per airframe below L2 (10.9): one flight, one aircraft. Rotation is L2."
+    },
+    {
+      "path": "takeoff",
+      "scope": "manifest",
+      "section": "2.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "1.3 lists the takeoff grid as an L1 ingredient, which is not the same as making it mandatory: a rotation file places aircraft through launch_stack instead, and both L2 reference files do exactly that."
+    },
+    {
+      "path": "roles",
+      "scope": "manifest",
+      "section": "10",
+      "L0": "FORBIDDEN",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "FORBIDDEN at L0 for the same reason as drones[].trajectory: roles carry segment tracks.",
+      "enforced": {
+        "L0": "schema"
+      }
+    },
+    {
+      "path": "assignments",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "waves",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "wave_groups",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "wave_cycle",
+      "scope": "manifest",
+      "section": "10.8",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "handovers",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "corridors",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "launch_stack",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "turnaround",
+      "scope": "manifest",
+      "section": "10.9",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "open_ended",
+      "scope": "manifest",
+      "section": "10.8",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "note": "an open-ended show is L2 only, and it still has to end (R10.24).",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "energy",
+      "scope": "manifest",
+      "section": "10",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "CONDITIONAL",
+      "condition": "REQUIRED where the file declares rotation (waves with two or more entries, or wave_cycle): a rotation plan without an energy budget is a wish."
+    },
+    {
+      "path": "safety",
+      "scope": "manifest",
+      "section": "7.1",
+      "L0": "OPTIONAL",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "7.1: at L0 the object is optional because an L0 file makes no safety claim at all.",
+      "enforced": {
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "safety.min_separation_m",
+      "scope": "manifest",
+      "section": "7.1",
+      "L0": "OPTIONAL",
+      "L1": "REQUIRED",
+      "L2": "REQUIRED",
+      "note": "REQUIRED whenever safety is present -- it is what the object exists to state.",
+      "enforced": {
+        "L1": "schema",
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "safety.geofence",
+      "scope": "manifest",
+      "section": "7.1",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "the operative, onboard-evaluable fence is termination.geofence (7.3); this one is the show-level envelope and is not duplicated as a requirement."
+    },
+    {
+      "path": "termination",
+      "scope": "manifest",
+      "section": "7",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "termination.escalation",
+      "scope": "manifest",
+      "section": "7.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "note": "REQUIRED whenever termination is present: the four rungs and the one-step rule are the object's purpose.",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "termination.channel",
+      "scope": "manifest",
+      "section": "7.2",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "termination.geofence",
+      "scope": "manifest",
+      "section": "7.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "termination.link_loss",
+      "scope": "manifest",
+      "section": "7.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "termination.rth_availability",
+      "scope": "manifest",
+      "section": "7.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "termination.coordinated_rth",
+      "scope": "manifest",
+      "section": "7.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "termination.fallback_channel",
+      "scope": "manifest",
+      "section": "7.2",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "note": "the independent second channel is an L2 construct (7.2); below L2 there is no termination policy for it to serve.",
+      "enforced": {
+        "L0": "schema",
+        "L1": "schema"
+      }
+    },
+    {
+      "path": "termination.disarmed_fall_containment",
+      "scope": "manifest",
+      "section": "7.5",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "note": "7.5: REQUIRED at L2, and checkable -- the safety area MUST contain the fall trajectory of a disarmed aircraft from any show position. The fall model itself is still open (A30).",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "position_integrity",
+      "scope": "manifest",
+      "section": "7.4",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "1.3 advertises the GNSS integrity policy as an L2 ingredient. v0.1 does NOT make it REQUIRED, and neither L2 reference file carries it. Stating that here is the point of this appendix; whether it becomes REQUIRED at L2 in v0.2 is A39."
+    },
+    {
+      "path": "interference_policy",
+      "scope": "manifest",
+      "section": "7.4",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "as position_integrity: specified, not yet mandated (A39)."
+    },
+    {
+      "path": "environment_envelope",
+      "scope": "manifest",
+      "section": "7.5",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "ground_zones",
+      "scope": "manifest",
+      "section": "7.5",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "extensions_used",
+      "scope": "manifest",
+      "section": "8",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "extensions_required",
+      "scope": "manifest",
+      "section": "8",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "an unknown entry here is REJECT at every profile (5.6) -- must-understand does not weaken as the profile drops."
+    },
+    {
+      "path": "extensions",
+      "scope": "manifest",
+      "section": "8.1.1",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL",
+      "note": "any object may carry one; unknown members outside it are an error, not an extension."
+    },
+    {
+      "path": "regulatory_profiles",
+      "scope": "manifest",
+      "section": "8",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "provenance",
+      "scope": "manifest",
+      "section": "2.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "provenance.created_by",
+      "scope": "manifest",
+      "section": "2.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "provenance.content_hash",
+      "scope": "manifest",
+      "section": "2.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "note": "2.3: OPTIONAL at L0/L1, REQUIRED at L2.",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "provenance.signature",
+      "scope": "manifest",
+      "section": "2.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "REQUIRED",
+      "enforced": {
+        "L2": "schema"
+      }
+    },
+    {
+      "path": "provenance.validated_by",
+      "scope": "manifest",
+      "section": "2.3",
+      "L0": "OPTIONAL",
+      "L1": "OPTIONAL",
+      "L2": "OPTIONAL"
+    },
+    {
+      "path": "resource:segments.start_yaw_deg",
+      "scope": "resource",
+      "section": "4.2.5",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "note": "yaw is L2 (1.3, 4.2.5). All-or-nothing per track, and never part of the canonical reduction of 4.4.5."
+    },
+    {
+      "path": "resource:segments.segments[].yaw_deg",
+      "scope": "resource",
+      "section": "4.2.5",
+      "L0": "FORBIDDEN",
+      "L1": "FORBIDDEN",
+      "L2": "OPTIONAL",
+      "note": "present exactly when start_yaw_deg is present."
+    }
+  ]
+}

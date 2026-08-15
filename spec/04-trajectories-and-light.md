@@ -207,6 +207,81 @@ in metres per millisecond, and at the start of the next segment
 d/dt value  at u = 0  =  3·(c1 − P₀) / dt_ms      (bezier)
 ```
 
+### 4.2.5 Yaw (L2)
+
+Until v0.1 was frozen, `yaw` was listed as an L2 feature in §1.3 and carried by
+two schema fields, but was specified nowhere. This section closes that gap
+(A34). An aircraft that does not point anywhere in particular does not need it:
+yaw is **OPTIONAL at L2 and FORBIDDEN below L2** (Appendix C).
+
+Yaw rides on a **segment track** and nowhere else. It is expressed by
+`start_yaw_deg` at track level and `yaw_deg` on every segment, mirroring
+`start_point` / `p`: the value belongs to the **end** of the segment, and the
+start anchor is the previous segment's value.
+
+```jsonc
+{ "kind": "segments", "interp": "bezier", "start_ms": 0,
+  "start_point": [0,0,30], "start_yaw_deg": 350.0,
+  "segments": [ { "dt_ms": 1000, "type": "linear", "p": [10,0,30],
+                  "yaw_deg": 10.0 } ] }
+```
+
+**All or nothing.** If any segment carries `yaw_deg`, then every segment of
+that track MUST carry it and `start_yaw_deg` MUST be present. A partially
+yawed track is a REJECT-class error (§5.6): the alternative is a reader
+inventing an orientation for the gaps.
+
+**Frame and sign.** `yaw_deg` is measured **in the show frame of §3**, from the
+`+X` axis towards the `+Y` axis. Naming both axes fixes the sign under either
+`handedness`, which a phrase like "counter-clockwise" does not. It is the
+direction the airframe's nose points; it says nothing about the direction of
+travel, and DSX never derives one from the other. Where a consumer needs a
+compass heading, it converts using the declared `frame.bearing_deg` — the file
+does not carry a second, redundant representation.
+
+**Values are unwrapped, and MUST NOT be normalised.** `yaw_deg` is a plain
+real number with no range limit. `350 → 370` is a twenty-degree turn one way;
+`350 → 10` is a three-hundred-and-forty-degree turn the other way; `350 → 1070`
+is two full turns and then some. A reader MUST NOT reduce values modulo 360,
+and MUST NOT substitute the shorter arc between two angles. Shortest-arc
+interpolation is **explicitly excluded**: it is undefined at exactly 180°, it
+cannot express a deliberate multi-turn spin, and it silently rewrites the
+choreography of every file that crosses the wrap point. Producers that hold
+their angles normalised MUST unwrap them on export.
+
+**Interpolation is linear in `u` (§4.2.2), always** — including across
+`bezier`, `poly` and `constant` position segments. Yaw has no control points,
+and a `constant` position segment with a changing `yaw_deg` is the ordinary way
+to express a rotation on the spot:
+
+```
+yaw(u) = yaw_start + u · (yaw_deg − yaw_start)
+```
+
+Outside the track's extent, yaw clamps to the first and last value, exactly as
+position does (§4.2.1).
+
+**Rounding and output.** Yaw is rounded to **millidegrees** with the rule of
+§4.4.4. Yaw is **not** part of the canonical reduction of §4.4.5 and therefore
+not part of the §1.4 guarantee: that reduction remains exactly
+`t_ms,x_m,y_m,z_m,r,g,b`, so that adding yaw to the format never changes what
+an L0 consumer receives. Where a yaw track is reduced for exchange, the
+canonical form is the separate CSV
+
+```
+t_ms,yaw_deg
+```
+
+on the instants of §4.4.1, three decimal places, LF, no BOM.
+`tools/dsx_sample.py --yaw` emits exactly this.
+
+**Rate limit.** The implied yaw rate over any segment is
+`|yaw_deg − yaw_start| / dt_ms · 1000` degrees per second. Where it exceeds the
+bound device mode's `max_yaw_rate_dps` (§5), the finding is **BLOCK-FLIGHT**,
+not WARN: the aircraft would either clip the rotation or fall behind its own
+choreography, and both are visible from the ground. A `declared_envelope` that
+states `peak_yaw_rate_dps` MUST NOT understate the value computed here.
+
 ## 4.3 Sampled tracks
 
 ```jsonc

@@ -22,6 +22,10 @@ jobs:
       - run: python3 conformance/check_rotation.py
       - run: python3 conformance/check_archive.py
       - run: python3 conformance/run_sampling_checks.py
+      # The profile matrix is checked against the schema by mutation, and
+      # Appendix C must still be the generated rendering of it -- a matrix
+      # edited by hand in the Markdown is a matrix that no longer binds.
+      - run: python3 conformance/check_profiles.py
       # The translation checker is self-tested first: a checker whose failure
       # path is never exercised cannot be distinguished from one that always
       # returns success.

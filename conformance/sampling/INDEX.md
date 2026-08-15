@@ -24,6 +24,7 @@ below is therefore marked, and the analytic ones are the ones that matter.
 | `a3-until-next` | **analytic** | 2 Hz | 2000 ms | `time_semantics: until_next` with identical data to `a4` (§4.3.2). |
 | `a4-since-previous` | **analytic** | 2 Hz | 2000 ms | `time_semantics: since_previous`. Same `data` as `a3`; the two outputs are displaced by **exactly one sample period**. This pair is the reason the field has no default. |
 | `a5-cubic` | **analytic** | 2 Hz | 3000 ms | uniform Catmull–Rom (§4.3.3), including the **endpoint-duplication** rule at both ends. The interior value at `t=1500` is 1.875 m; the final interval at `t=2500` is 4.625 m and is reachable only with `P₃ = data[N−1]` duplicated. A natural cubic spline or a centripetal parameterisation fails here — which is the point: "cubic" alone was never a specification. |
+| `a6-yaw` | **analytic** | 2 Hz | 3000 ms | yaw (§4.2.5), which the canonical CSV does **not** carry — compared against `a6-yaw.expected.csv` in the `t_ms,yaw_deg` form. Three traps in seven rows: at `t=500` the value is **exactly 180.000**, where shortest-arc interpolation is undefined; at `t=1500` it is **370.000**, which a reader that normalises modulo 360 emits as `10.000`; at `t=2500` it is **730.0625**, a half-millidegree that separates round-half-away-from-zero from banker's rounding. Segment 2 is a `constant` position segment that turns 720° on the spot — proof that yaw interpolates linearly in `u` regardless of segment type. |
 
 ## Hand computation, shown
 
@@ -62,6 +63,19 @@ z = 0.5 · ( 2·3
           + (−1 + 3·3 − 3·6 + 6)·0.125 )
   = 0.5 · ( 6 + 2.5 + 1.25 − 0.5 ) = 4.625
 ```
+
+**`a6` at `t = 1500` and `t = 2500`** — segment 2 runs `10 → 730` over
+`[1000, 2000)`, segment 3 runs `730 → 730.125` over `[2000, 3000)`:
+
+```
+t=1500:  u = 0.5   yaw = 10 + 0.5·(730 − 10)   = 370.000    (not 10.000)
+t=2500:  u = 0.5   yaw = 730 + 0.5·(0.125)     = 730.0625
+                        730062.5 mdeg → 730063 → 730.063    (not 730.062)
+```
+
+`0.125` and `730.0625` are exact in binary64, so the half-millidegree is a real
+tie and not a floating-point artefact — the vector tests the rounding rule,
+not the accumulated error of a particular machine.
 
 ## Negative and side-effect cases
 

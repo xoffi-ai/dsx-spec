@@ -35,6 +35,10 @@
           "$ref": "#/$defs/point",
           "description": "position at start_ms. REQUIRED for a track whose first segment is relative to it, and the only way a closed loop can be checked at the seam."
         },
+        "start_yaw_deg": {
+          "type": "number",
+          "description": "section 4.2.5 (L2): yaw at start_ms, in the show frame, measured from +X towards +Y. Unwrapped: values are NOT reduced modulo 360. REQUIRED if any segment carries yaw_deg."
+        },
         "segments": {
           "type": "array",
           "minItems": 1,
@@ -55,7 +59,10 @@
                 "type": "array",
                 "items": { "type": "array", "items": { "type": "number" } }
               },
-              "yaw_deg": { "type": "number" },
+              "yaw_deg": {
+                "type": "number",
+                "description": "section 4.2.5 (L2): yaw at the END of this segment, show frame, +X towards +Y, unwrapped (350 -> 10 is a -340 degree turn, not a +20 degree one). All-or-nothing per track; interpolated linearly in u regardless of segment type."
+              },
               "extensions": { "$ref": "#/$defs/extensions" }
             },
             "additionalProperties": false,
@@ -74,7 +81,23 @@
         },
         "extensions": { "$ref": "#/$defs/extensions" }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$comment": "section 4.2.5: yaw is all-or-nothing. With start_yaw_deg every segment MUST carry yaw_deg; without it, none may -- a partially yawed track is REJECT, not a track with gaps for the reader to fill.",
+          "if": { "required": ["start_yaw_deg"] },
+          "then": {
+            "properties": {
+              "segments": { "items": { "required": ["yaw_deg"] } }
+            }
+          },
+          "else": {
+            "properties": {
+              "segments": { "items": { "not": { "required": ["yaw_deg"] } } }
+            }
+          }
+        }
+      ]
     },
     "sampled": {
       "type": "object",

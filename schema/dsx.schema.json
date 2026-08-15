@@ -571,12 +571,6 @@
             "type": "string",
             "x-archive-ref": true
           },
-          "yaw": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
           "payloads": {
             "type": "array",
             "items": {
@@ -3112,6 +3106,90 @@
             }
           }
         }
+      }
+    },
+    {
+      "$comment": "Appendix C: at L0 a trajectory is a sampled track and nothing else. The segment track is authoritative wherever both exist (4.1), so an L0 reader -- which cannot evaluate segments -- would fly the derived cache while the file says something different. Roles are excluded for the same reason: they carry segment tracks.",
+      "if": {
+        "properties": {
+          "profile": {
+            "const": "L0"
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "allOf": [
+          {
+            "not": {
+              "required": [
+                "roles"
+              ]
+            }
+          },
+          {
+            "properties": {
+              "drones": {
+                "items": {
+                  "required": [
+                    "trajectory_sampled"
+                  ],
+                  "not": {
+                    "required": [
+                      "trajectory"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "$comment": "Appendix C: payloads and the independent fallback termination channel are L2 constructs (6, 7.2). Below L2 there is no arm/disarm state machine and no termination policy, and a payload nobody is holding is worse than no payload.",
+      "if": {
+        "properties": {
+          "profile": {
+            "enum": [
+              "L0",
+              "L1"
+            ]
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "allOf": [
+          {
+            "properties": {
+              "drones": {
+                "items": {
+                  "not": {
+                    "required": [
+                      "payloads"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "termination": {
+                "not": {
+                  "required": [
+                    "fallback_channel"
+                  ]
+                }
+              }
+            }
+          }
+        ]
       }
     }
   ]

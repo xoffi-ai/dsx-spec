@@ -17,6 +17,7 @@
 | 10 | [Waves, sorties, rotation and continuous operation](10-waves-and-rotation.md) | draft |
 | A | [Open questions](A-open-questions.md) | living |
 | B | [Observed third-party formats](B-observed-formats.md) | living |
+| C | [**Profile matrix** (normative)](C-profile-matrix.md) | generated |
 
 ## Governing language
 

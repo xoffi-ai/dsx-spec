@@ -132,6 +132,24 @@ def _validate_segments(res: dict) -> None:
         raise DsxError("segments: start_point is REQUIRED (4.2.1)")
     if not res.get("segments"):
         raise DsxError("segments: at least one segment is required")
+    # 4.2.5: yaw is all-or-nothing. Checked before anything else because a
+    # partially yawed track is REJECT-class: the reader would have to invent an
+    # orientation for the gaps, and every reader would invent a different one.
+    yawed = ["yaw_deg" in seg for seg in res["segments"]]
+    if "start_yaw_deg" in res:
+        if not all(yawed):
+            missing = [i for i, has in enumerate(yawed) if not has]
+            raise DsxError(
+                f"segments: start_yaw_deg is present but segment(s) {missing} "
+                "carry no yaw_deg; yaw is all-or-nothing (4.2.5, REJECT)"
+            )
+    elif any(yawed):
+        carrying = [i for i, has in enumerate(yawed) if has]
+        raise DsxError(
+            f"segments: segment(s) {carrying} carry yaw_deg but the track has "
+            "no start_yaw_deg; yaw is all-or-nothing (4.2.5, REJECT)"
+        )
+
     anchor = tuple(float(v) for v in res["start_point"])
     for idx, seg in enumerate(res["segments"]):
         if seg["dt_ms"] <= 0:
@@ -358,6 +376,122 @@ def _eval_segments(res: dict, t_ms: int, table=None) -> tuple:
     # re-parameterised for constant speed.
     u = (t_ms - t_i) / dt_ms
     return _eval_segment(seg, anchor, u, res.get("interp"))
+
+
+# ---------------------------------------------------------------------------
+# 4.2.5 Yaw
+# ---------------------------------------------------------------------------
+
+
+def has_yaw(res: dict) -> bool:
+    """True if this resource carries a yaw track (4.2.5)."""
+    return res.get("kind") == "segments" and "start_yaw_deg" in res
+
+
+def _yaw_table(res: dict):
+    """(start_ms, [(T_i, dt_i, yaw_start_i, yaw_end_i)], end_ms, last_yaw).
+
+    Mirrors _segment_table: yaw_deg belongs to the END of a segment and the
+    start anchor is the previous segment's value (4.2.5).
+    """
+    start_ms = int(res["start_ms"])
+    anchor = float(res["start_yaw_deg"])
+    table = []
+    t_at = start_ms
+    for seg in res["segments"]:
+        dt_ms = int(seg["dt_ms"])
+        end = float(seg["yaw_deg"])
+        table.append((t_at, dt_ms, anchor, end))
+        anchor = end
+        t_at += dt_ms
+    return start_ms, table, t_at, anchor
+
+
+def eval_yaw(res: dict, t_ms: int, table=None) -> float:
+    """Yaw in degrees at t (4.2.5), unwrapped and un-normalised.
+
+    Linear in the local parameter u of 4.2.2 for EVERY segment type, including
+    bezier, poly and constant: yaw has no control points, and a constant
+    position segment with a changing yaw_deg is how a rotation on the spot is
+    written. Outside the extent the value clamps (4.2.1).
+
+    The returned value is NOT reduced modulo 360. 4.2.5 forbids both
+    normalisation and shortest-arc interpolation: 350 -> 10 is a -340 degree
+    turn, and a reader that "helpfully" takes the short way round rewrites the
+    choreography of every file that crosses the wrap point.
+    """
+    if not has_yaw(res):
+        raise DsxError("resource carries no yaw track (4.2.5)")
+    if table is None:
+        table = _yaw_table(res)
+    start_ms, segments, end_ms, last_yaw = table
+
+    if t_ms <= start_ms:
+        return segments[0][2]
+    if t_ms >= end_ms:
+        return last_yaw
+
+    lo, hi = 0, len(segments) - 1
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if segments[mid][0] <= t_ms:
+            lo = mid
+        else:
+            hi = mid - 1
+    t_i, dt_ms, yaw_start, yaw_end = segments[lo]
+    u = (t_ms - t_i) / dt_ms
+    return yaw_start + u * (yaw_end - yaw_start)
+
+
+def yaw_peak_rate_dps(res: dict) -> float:
+    """Highest implied yaw rate over any segment, in degrees per second (4.2.5).
+
+    This is the value a declared_envelope's peak_yaw_rate_dps MUST NOT
+    understate, and the one compared against the device mode's
+    max_yaw_rate_dps -- where it exceeds it, the finding is BLOCK-FLIGHT.
+    """
+    _, segments, _, _ = _yaw_table(res)
+    return max(
+        (abs(yaw_end - yaw_start) / dt_ms * 1000.0
+         for _, dt_ms, yaw_start, yaw_end in segments),
+        default=0.0,
+    )
+
+
+YAW_CSV_HEADER = "t_ms,yaw_deg"
+
+
+def _format_degrees(value_deg: float) -> str:
+    """Degrees with exactly three decimals, via the millidegree of 4.2.5.
+
+    Same construction as _format_metres, and for the same reason: format from
+    the already-rounded integer, never re-round in the formatter.
+    """
+    mdeg = dsx_round(value_deg * 1000.0)
+    sign = "-" if mdeg < 0 else ""
+    mdeg = abs(mdeg)
+    return f"{sign}{mdeg // 1000}.{mdeg % 1000:03d}"
+
+
+def sample_yaw_to_csv(traj: dict, rate_hz: float, duration_ms: int) -> str:
+    """The yaw reduction of 4.2.5: t_ms,yaw_deg on the instants of 4.4.1.
+
+    Deliberately a separate file and a separate function from sample_to_csv:
+    the canonical reduction of 4.4.5 stays exactly t_ms,x_m,y_m,z_m,r,g,b, so
+    that adding yaw to a show never changes what an L0 consumer receives
+    (1.4).
+    """
+    if rate_hz <= 0:
+        raise DsxError("rate must be positive (4.4.1)")
+    if duration_ms is None:
+        raise DsxError("duration_ms is null: supply an explicit window (4.4.1, A25)")
+    table = _yaw_table(traj)
+    k_max = int(math.floor(duration_ms * rate_hz / 1000.0))
+    rows = [YAW_CSV_HEADER]
+    for k in range(k_max + 1):
+        t_k = dsx_round(k * 1000.0 / rate_hz)
+        rows.append(f"{t_k},{_format_degrees(eval_yaw(traj, t_k, table))}")
+    return "\n".join(rows) + "\n"
 
 
 # ---------------------------------------------------------------------------
@@ -722,6 +856,12 @@ def main(argv=None) -> int:
     parser.add_argument("--rate", required=True, type=float, help="output rate f in Hz")
     parser.add_argument("--duration-ms", required=True, type=int, help="window length in milliseconds")
     parser.add_argument("-o", "--output", help="write to this file instead of stdout")
+    parser.add_argument(
+        "--yaw",
+        action="store_true",
+        help="emit the yaw reduction of 4.2.5 (t_ms,yaw_deg) instead of the "
+        "canonical reduction of 4.4.5; requires a segment track with yaw",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -731,7 +871,12 @@ def main(argv=None) -> int:
         light = load_resource(args.light) if args.light else None
         if light is not None and light["kind"] != "light_program":
             raise DsxError(f"--light must be a light_program, got {light['kind']!r}")
-        csv_text = sample_to_csv(traj, light, args.rate, args.duration_ms)
+        if args.yaw:
+            if not has_yaw(traj):
+                raise DsxError("--yaw: this track carries no yaw (4.2.5)")
+            csv_text = sample_yaw_to_csv(traj, args.rate, args.duration_ms)
+        else:
+            csv_text = sample_to_csv(traj, light, args.rate, args.duration_ms)
     except (DsxError, KeyError, OSError, json.JSONDecodeError) as exc:
         print(f"dsx_sample: {exc}", file=sys.stderr)
         return 2

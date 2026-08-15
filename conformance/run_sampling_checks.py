@@ -87,6 +87,60 @@ import io, contextlib, json as _json
 
 print("\nOther section-4 rules")
 
+# 4.2.5: yaw. A separate reduction (t_ms,yaw_deg), so it is checked separately
+# and the canonical CSV above stays exactly t_ms,x_m,y_m,z_m,r,g,b.
+yaw_traj = dsx_sample.load_resource(VEC / "a6-yaw.traj.json")
+got_yaw = dsx_sample.sample_yaw_to_csv(yaw_traj, 2, 3000)
+want_yaw = (VEC / "a6-yaw.expected.csv").read_text()
+if got_yaw == want_yaw:
+    print("PASS  a6-yaw [analytic]              2 Hz / 3000 ms, unwrapped")
+else:
+    fail += 1
+    print("FAIL  a6-yaw [analytic]              output differs")
+    for i, (a, b) in enumerate(zip(got_yaw.splitlines(), want_yaw.splitlines())):
+        if a != b:
+            print(f"        line {i+1}: expected {b}, got {a}")
+
+# 4.2.5: the peak rate a declared_envelope MUST NOT understate -- segment 2
+# turns 720 degrees in 1000 ms on the spot.
+peak = dsx_sample.yaw_peak_rate_dps(yaw_traj)
+if abs(peak - 720.0) < 1e-9:
+    print(f"PASS  a6-yaw peak rate               {peak:.1f} dps (4.2.5)")
+else:
+    print(f"FAIL  a6-yaw peak rate               expected 720.0 dps, got {peak}")
+    fail += 1
+
+# 4.2.5: yaw is all-or-nothing, in both directions -- REJECT, not a gap for the
+# reader to fill. Mutated in memory so the fixtures stay readable.
+for label, mutate in (
+    ("yaw without start_yaw_deg", lambda d: d.pop("start_yaw_deg")),
+    ("start_yaw_deg without yaw", lambda d: d["segments"][1].pop("yaw_deg")),
+):
+    doc = _json.loads((VEC / "a6-yaw.traj.json").read_text())
+    mutate(doc)
+    try:
+        dsx_sample._validate_segments(doc)
+        print(f"FAIL  {label:32s} should have raised DsxError")
+        fail += 1
+    except dsx_sample.DsxError as e:
+        print(f"PASS  {label:32s} rejected: {e}")
+    # and the schema must agree with the code, as it does for strobe duty --
+    # the 2026-08-15 audit found those two disagreeing, so parity is tested,
+    # not assumed.
+    try:
+        import jsonschema as _js
+        from referencing import Registry as _Registry, Resource as _Resource
+        _sch = _json.loads((ROOT / "schema" / "resource.schema.json").read_text())
+        _reg = _Registry().with_resources([(_sch["$id"], _Resource.from_contents(_sch))])
+        _errs = list(_js.Draft202012Validator(_sch, registry=_reg).iter_errors(doc))
+        if _errs:
+            print(f"PASS  {label + ' (schema)':32s} rejected")
+        else:
+            print(f"FAIL  {label + ' (schema)':32s} resource.schema.json accepted it")
+            fail += 1
+    except ImportError:
+        print(f"SKIP  {label + ' (schema)':32s} jsonschema not installed")
+
 # 4.5.2: duty is REQUIRED on a strobe op, no default. Rejected at load time.
 try:
     dsx_sample.load_resource(VEC / "reject-strobe-no-duty.light.json")

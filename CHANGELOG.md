@@ -2,6 +2,54 @@
 
 ## Unreleased
 
+### Added (yaw and the profile matrix -- A34 closed, 2026-08-16)
+
+- **§4.2.5 specifies yaw.** It was advertised in §1.3 as an L2 feature and
+  defined nowhere. Now: unwrapped degrees from +X toward +Y, linear in the
+  segment parameter `u` for *every* segment type (including `constant`, which
+  is how a rotation on the spot is written), clamped outside the track,
+  all-or-nothing per track, rounded to millidegrees.
+- **Yaw is a separate reduction**, `t_ms,yaw_deg`, not a column in the
+  canonical CSV. The reduction of §4.4.5 stays exactly
+  `t_ms,x_m,y_m,z_m,r,g,b`, so adding yaw to a show cannot change what an L0
+  consumer receives -- which is the §1.4 guarantee, and it would have been
+  quietly broken by a seventh column.
+- **No shortest-arc, no modulo.** `350 -> 10` is a -340° turn. A reader that
+  "helpfully" takes the short way round rewrites the choreography of every
+  file that crosses the wrap point.
+- **Vector `a6-yaw`** (hand-computed, in CI) pins the three traps in seven
+  rows: exactly `180.000` where shortest-arc is undefined, `370.000` where a
+  normalising reader would emit `10.000`, and a half-millidegree tie
+  (`730.0625`, exact in binary64) separating round-half-away-from-zero from
+  banker's rounding. Plus `yaw_peak_rate_dps()`, the value a
+  `declared_envelope` MUST NOT understate.
+- **`profiles/profile-matrix.json` is the normative profile matrix**, rendered
+  to [`spec/C-profile-matrix.md`](spec/C-profile-matrix.md) by
+  `tools/gen_profile_matrix.py`. Profile applicability had been scattered
+  across §1.3, §2.3, §3, §7.1.1 and §10.9; a hand-maintained table and a schema
+  drift apart quietly, so the table is generated and CI fails if the published
+  one is edited by hand.
+- **`conformance/check_profiles.py` proves the cells instead of asserting
+  them.** For every REQUIRED and FORBIDDEN cell it deletes or inserts the
+  member in a real reference file and asks the schema whether it notices;
+  the measured result is written back into the matrix, so a schema rule
+  disappearing later shows up as a regression rather than as nothing at all.
+- **Five rules existed only as prose and are now enforced:** `roles` and
+  segment trajectories are FORBIDDEN at L0 (where both track forms exist §4.1
+  makes the segment track authoritative, so an L0 reader would fly the derived
+  cache while believing it flies the file), `trajectory_sampled` is REQUIRED at
+  L0, and `payloads` and `termination.fallback_channel` are FORBIDDEN below L2.
+  73 of 73 manifest cells are now schema-enforced; the four yaw cells are
+  checked against the resource files directly.
+- **§1.3 no longer implies obligations it does not create.** "L1 adds the
+  takeoff grid" describes a profile's purpose; Appendix C decides individual
+  files, and says so.
+- Two follow-ups recorded rather than left to be rediscovered: **A38** (no L1
+  reference file exists, so the L1 column is measured against a derived
+  fixture) and **A39** (`position_integrity`, `interference_policy` and
+  `time_source` are advertised as L2 ingredients but are OPTIONAL at L2 in
+  v0.1).
+
 ### Added (multilingual publication, 2026-08-16)
 
 - **`TRANSLATIONS.md` and `translations/`.** DSX will be published in
