@@ -121,9 +121,9 @@ later wants to own a name in China:
 - CNIPA examines **relative grounds on its own motion** — unlike EUIPO. A prior
   Chinese registration for DSX in class 9 would block an application outright,
   not merely expose it to opposition.
-- The manufacturers this project most needs — HighGreat, Damoda, DJI, Litebee —
-  are Chinese, and the intended steward is a Shenzhen industry association.
-  A Chinese conflict is not a peripheral risk here; it is the core market.
+- Most of the manufacturers this project needs are Chinese, and the intended
+  steward is a Shenzhen industry association. A Chinese conflict is not a
+  peripheral risk here; it is the core market.
 
 Also unchecked: UK (separate register post-Brexit), Japan, Korea, Singapore,
 UAE, and Madrid international registrations designating any of these.

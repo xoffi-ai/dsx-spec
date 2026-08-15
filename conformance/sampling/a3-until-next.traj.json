@@ -1,0 +1,24 @@
+{
+  "kind": "sampled",
+  "rate_hz": 1,
+  "interp": "hold",
+  "time_semantics": "until_next",
+  "t0_ms": 0,
+  "data": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      2.0
+    ]
+  ]
+}

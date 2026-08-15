@@ -8,7 +8,7 @@ not have is the more dangerous artefact.*
 
 | # | Question | Needed from |
 |---|---|---|
-| A1 | Normative sampler test vectors do not yet exist (§4.4). Until they do, the interoperability guarantee is an intention. | this project |
+| A1 | **Resolved 2026-08-15.** Five hand-computed (`analytic`) sampler test vectors exist in `conformance/sampling/` and pass against `tools/dsx_sample.py`, run in CI by `run_sampling_checks.py`. The §1.4 guarantee is now a demonstrated property for the cases covered — Bézier evaluation, `fade`/`strobe` rounding, `until_next`/`since_previous` displacement, and Catmull–Rom with endpoint duplication. Coverage is not exhaustive; see A36 for what is not yet vectorised. | this project |
 | A2 | `.dsb` binary encoding is specified only in outline. | this project |
 | A3 | Conformance suite is an outline (§9). | this project |
 
@@ -63,14 +63,14 @@ XML form, which is directly embeddable.
 | A23 | Under `by_slot_index`, R10.17 (airframe closure) is implied by R10.15 plus the slot-completeness rule and cannot fail independently. It is kept as a separate rule because it *can* fail under explicit binding, but the redundancy should be revisited once A22 is resolved. |
 | A24 | Five rules of §10 are specified but have **no executable check** in `conformance/`: R10.2 (ingress/egress is not choreography), R10.7 (handover windows are termination-aware), R10.8 (corridor intersection, see A18), R10.13 (energy is per sortie, not per model) and R10.25 (no silent degradation, which constrains readers rather than files). They are normative regardless; the gap is in the suite, not in the specification, and is recorded here rather than left for a reader to discover. |
 | A25 | §4.4 derives the normative sample count from `duration_ms`, but R10.24 requires `duration_ms: null` for an indefinite show. The interoperability guarantee of §1.4 therefore has **no defined meaning** for the shows §10.8 introduces. The likely resolution is to sample one loop period and declare it as repeating, but that is not specified yet, and until it is, an open-ended file cannot be reduced to `t,x,y,z,R,G,B` by the rule the specification gives. |
-| A26 | The seam rules (R10.21, R10.22) are checked at manifest level only: the validator confirms that a loop is *declared* and that the handover is masked, but nothing yet evaluates the trajectory files to prove position and velocity actually match at the seam. That check needs the sampler (§4.4), which has no test vectors — so loop continuity is currently a declaration, not a verified property. |
+| A26 | **Resolved 2026-08-15.** `check_archive.py::eval_seam` now evaluates the actual trajectory files and proves position (and, where `continuity: c1` is declared, velocity) match at the loop seam, using the §4.2.4 endpoint-tangent formulas directly rather than by calling `tools/dsx_sample.py`. Both directions are tested: `continuous-l2` passes, and a mutated copy with a 1 m seam gap is proven to fail. **Residual limitation (A37):** the formula assumes the first and last segment of the loop are `bezier`; a loop closed with a `poly` or `linear` segment at either end raises `KeyError` in `eval_seam` instead of failing with a clear message, or possibly not at all. |
 
 ## Third-party format observation
 
 | # | Question |
 |---|---|
 | A27 | The 4-byte field at offset 6 of a v2 SKYB header is unresolved (Appendix B.1.4). Eleven CRC-32 variants, four non-CRC checksums and three truncated hashes over five byte ranges were excluded. Until it is identified, DSX importers MUST NOT claim to verify SKYB integrity. |
-| A28 | No public sample has been located for `.dac`, `.bin`, `.path`/`.path3` or Drotek JSON. Appendix B stays incomplete until one is contributed. |
+| A28 | No public sample has been located for `.dac`, `.bin`, `.path`/`.path3` or the vendor JSON variants. Appendix B stays incomplete until one is contributed. |
 
 ## Specification completeness (external review, 2026-08-15)
 
@@ -84,8 +84,19 @@ the one that blocks first use.*
 |---|---|---|
 | A29 | The one-action-per-rung requirement (§7.1) is addressed to the ground station, which §1.1 places outside DSX's scope, and is therefore not checkable by `conformance/`. A file-level representation — declaring the operator action count per rung — would make it verifiable, at the cost of stating something the file cannot enforce. Undecided. | open |
 | A30 | The fall model behind `disarmed_fall_containment` (§7.5) is unspecified: no drag model, no tumbling assumption, no mass/area inputs, no wind case. Two validators can reach different verdicts on the same geometry. `v0.1` therefore requires disclosure of model, tool and wind case rather than a geometric guarantee. | open |
-| A31 | **The two central data structures are underspecified.** §4.2 does not state, per segment `type`, the exact field list, where the first segment's start point comes from, or the Bézier parameterisation; §4.3 does not state the element layout, tuple order or units of a sampled `data` array. **Until this is written, no conforming reader can be built — not even at L0.** This is the highest-priority item in the specification. | **blocking** |
-| A32 | §4.4 is not yet bit-exact as written: the rounding mode for `t_k` is unstated while later steps name two different rounding rules; whether `fade` is interpolated in encoded sRGB or in linear light is undefined; `strobe` has no phase origin or on/off boundary rule; and the reduction of a 4-channel (RGBW) program to `R, G, B` is described as profile-governed but the profile has no such field. Each of these alone defeats the §1.4 guarantee. | **blocking for §1.4** |
+| A31 | **Resolved 2026-08-15.** §4.2 now states the field list per segment `type` (`bezier`, `poly`, `linear`), the start-point rule (`start_point` for the first segment, the previous segment's `p` thereafter) and the Bézier parameterisation; §4.3 states the sampled `data` element layout, tuple order and units. `tools/dsx_sample.py` is a clean-room implementation from this text alone and passes the vectors of A1, which is the practical proof that a reader can now be built from the prose. | resolved |
+| A32 | **Resolved 2026-08-15.** §4.4 now fixes `t_k` rounding (round-half-away-from-zero, ties away from zero — the case A1's `a1-bezier` vector exists specifically to distinguish from banker's rounding), states `fade` is interpolated in encoded sRGB, gives `strobe` a phase origin and a strict `<` on/off boundary, and requires `duty` on every `strobe` op with no default (this last point was implemented as a *default* rather than a *rejection* in the reference tool until the 2026-08-15 audit found the discrepancy against the now-complete text; both the schema and `tools/dsx_sample.py` reject its absence now, see CHANGELOG.md). RGBW reduction is specified directly in §4.4.5, not deferred to the device profile. | resolved |
 | A33 | Container security rules are missing from §2.1: archive entry names are not constrained (path traversal, absolute paths), duplicate entry names are not forbidden — which is a signature-bypass vector against §2.3.1, since one entry can be hashed and another parsed — and no decompression limits are stated. A format intended to be opened by ground stations needs all three. | open |
 | A34 | Profile applicability is scattered across §1.3, §2.3, §3, §7.1.1 and §10.9 with no single matrix, and §1.3 lists `yaw` as an L2 feature although yaw is specified nowhere in the document. A normative member × profile × REQUIRED/OPTIONAL/FORBIDDEN appendix is needed; `yaw` must be either specified or withdrawn from §1.3. | open |
 | A35 | Several identifiers used in the §10 inequalities (`aircraft_per_wave`, `service_s`, `flight_s`, `turnaround_s`) are prose names, not field paths, so R10.17–R10.19 are not machine-checkable from the text alone — only from `conformance/check_rotation.py`, which is the wrong direction of authority. | open |
+
+## Sampler and seam-check coverage (added 2026-08-15, after A1/A26/A31/A32 closed)
+
+*These two are new, not carried over — they surfaced while writing the fixes
+for A1, A26, A31 and A32 and are recorded immediately rather than left for the
+next reader to rediscover.*
+
+| # | Question | Status |
+|---|---|---|
+| A36 | The five vectors that close A1 cover Bézier evaluation, `fade`/`strobe` rounding, both `time_semantics` values, and Catmull–Rom with endpoint duplication — the cases that were hardest to get bit-exact. They do **not** cover: `poly` segments, `linear` segments, the `hold` interpolation mode on an interval track, before/after-track clamping (§4.2.1/§4.3.4), the grid-collision `w=0` rule (§4.3.1) at rate > 1000 Hz, or the RGBW-channel-drop reduction (§4.4.5, now covered only by a hand-run check in `run_sampling_checks.py`, not a byte-exact CSV vector). The §1.4 guarantee is demonstrated for the covered cases and still an intention for the rest. | open |
+| A37 | `conformance/check_archive.py::eval_seam` proves loop-seam continuity (R10.21/R10.22, closing A26) but its tangent formula assumes both the first and the last segment of the loop are `bezier`. A loop closed with a `poly` or `linear` segment either raises an unhelpful `KeyError` or silently evaluates the wrong thing, depending on which field happens to collide. Needs either a segment-type-aware seam evaluator or an explicit restriction, stated in §10, that a declared loop's boundary segments MUST be `bezier`. | open |

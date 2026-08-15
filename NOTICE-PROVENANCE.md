@@ -11,7 +11,8 @@
 
 This document records how the DSX specification was developed, what sources
 were consulted, and what boundaries apply to contributors. It exists so that
-the question "did you copy this from Skybrush?" has a written, verifiable
+the question "did you copy this from an existing implementation?" has a
+written, verifiable
 answer *before* anyone asks it.
 
 ## 1. Legal basis
@@ -27,11 +28,13 @@ DSX is built on that distinction, deliberately and narrowly.
 
 The following were examined in order to understand the state of the art:
 
-- **Publicly published specifications**: VVIZ (Finale 3D / Verge Aero), DJI WPML,
-  GDTF / MVR (DIN SPEC 15800 / 15801), glTF 2.0, OpenTimelineIO, ASTM F3322,
-  MAVLink message definitions.
+- **Publicly published specifications**: VVIZ, WPML, GDTF / MVR (DIN SPEC
+  15800 / 15801), glTF 2.0, OpenTimelineIO, ASTM F3322, MAVLink message
+  definitions.
 - **Publicly distributed test fixtures**: the `.skyb` fixture files shipped in
-  the `libskybrush` repository. These were parsed to confirm container framing,
+  a publicly readable GPL-licensed reference library, cited by SHA-256 in
+  Appendix B.1 so the observation can be reproduced by anyone who has or
+  obtains the same bytes. These were parsed to confirm container framing,
   block typing and event encoding. Observations recorded: magic marker, version
   byte, feature byte, optional CRC32, `uint8 type | uint16 LE length | body`
   framing, non-fixed block ordering, and the 10-byte event record layout.
@@ -68,9 +71,17 @@ they are on. See `CONTRIBUTING.md`.
 
 ## 5. Third-party trademarks
 
-Skybrush, DJI, HighGreat, Damoda, UVify, Verge Aero, Litebee, Drotek, Finale 3D,
-Depence, GDTF, MVR, glTF and all other marks are the property of their
-respective owners. Their use here is nominative and descriptive only.
+All product names, format names and company names referred to anywhere in this
+repository are the property of their respective owners. Their use is nominative
+and descriptive only — to identify a format or to cite a source, never to imply
+endorsement, affiliation or a defect in anyone else's product.
+
+This project does not publish comparative claims about identifiable third-party
+products, and does not name any third party anywhere in the specification.
+Where a source had to be cited so a reader can reproduce an observation
+(Appendix B), the citation is a SHA-256 per file, generically described —
+sufficient to prove which bytes were examined to anyone who already has them,
+without identifying where they came from.
 
 ## 6. Amendments
 

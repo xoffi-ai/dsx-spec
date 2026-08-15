@@ -141,9 +141,9 @@
                 "then": { "required": ["dur_ms"] }
               },
               {
-                "$comment": "section 4.5: a strobe without a rate is not reproducible",
+                "$comment": "section 4.5.2: duty is REQUIRED with no default -- a strobe without a declared duty is not reproducible",
                 "if": { "properties": { "op": { "const": "strobe" } }, "required": ["op"] },
-                "then": { "required": ["hz", "dur_ms"] }
+                "then": { "required": ["hz", "dur_ms", "duty"] }
               }
             ]
           }

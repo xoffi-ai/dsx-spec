@@ -18,6 +18,7 @@ jobs:
       - run: python3 conformance/run_schema_checks.py
       - run: python3 conformance/check_rotation.py
       - run: python3 conformance/check_archive.py
+      - run: python3 conformance/run_sampling_checks.py
       - name: examples are sealed with the committed content hash
         run: |
           python3 tools/dsx_seal.py verify examples/rotation-l2

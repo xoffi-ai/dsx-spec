@@ -2,6 +2,54 @@
 
 ## Unreleased
 
+### Changed (sampler audit and appendix-B anonymisation round, 2026-08-15)
+
+- **A1, A31, A32 resolved — §4.2/§4.3/§4.4 are now specified completely, and
+  it is proven rather than asserted.** `tools/dsx_sample.py` is a clean-room
+  reference sampler written from the spec text alone; five hand-computed
+  (`analytic`) test vectors in `conformance/sampling/` pin down cubic Bézier
+  evaluation, `t_k` rounding (round-half-away-from-zero vs. banker's
+  rounding), `fade`/`strobe` colour rounding, both `time_semantics` values and
+  Catmull–Rom with endpoint duplication. `run_sampling_checks.py` runs in CI.
+  The §1.4 interoperability guarantee is now a demonstrated property for the
+  cases covered — README.md, `spec/01-overview.md` §1.4 and
+  `spec/09-conformance.md` updated accordingly. Coverage is not exhaustive;
+  the gap is recorded as new item **A36**, not hidden.
+- **A26 resolved.** `check_archive.py::eval_seam` now evaluates trajectory
+  files directly to prove loop-seam position/velocity continuity (R10.21,
+  R10.22), using the §4.2.4 tangent formulas; proven both ways (passes on
+  `continuous-l2`, fails on a mutated 1 m gap). Residual limitation recorded
+  as new item **A37**: the formula assumes `bezier` boundary segments.
+- **A real bug found auditing the AMBIGUITIES list against the completed
+  §4.2–§4.5, not a hypothetical one.** Five of the six long-standing
+  "ambiguity" notes in `tools/dsx_sample.py` turned out to be stale — the
+  final spec text already resolved each of them and the code already matched
+  it. The sixth was a genuine discrepancy: §4.5.2 makes `duty` REQUIRED on a
+  `strobe` op with **no default** ("any default would be a house style
+  silently imposed on every file that omits it"), but the reference tool
+  silently substituted `0.5`, and `schema/resource.schema.json` did not
+  require it either. Both are fixed: the schema now requires `duty` on
+  `strobe`, and `_validate_light` rejects its absence before evaluation. A
+  second, smaller gap surfaced in the same pass: §4.4.5 requires a producer to
+  report dropped RGBW channels as a WARN-class finding; `sample_to_csv` did
+  this silently and now prints the warning. Both are covered by new negative
+  fixtures (`reject-strobe-no-duty.light.json`,
+  `reject-rgbw-drop-warns.light.json`) and asserted at the end of
+  `run_sampling_checks.py`, at both the tool level and the schema level, so
+  the two cannot silently drift apart again. `AMBIGUITIES` in
+  `tools/dsx_sample.py` is now empty, with the audit trail kept in a comment.
+- **Appendix B provenance citation anonymised.** `spec/B-observed-formats.md`
+  previously named the specific open-source repository and GitHub URL the
+  thirteen `.skyb` fixtures were retrieved from. Per an explicit decision that
+  the specification itself must name no third party anywhere, that citation
+  is now generic ("a publicly readable GPL-licensed open-source project"), matching
+  the wording already used throughout `NOTICE-PROVENANCE.md`. The SHA-256 of
+  each fixture is kept, and remains sufficient to prove which exact bytes were
+  examined to anyone who already has or independently obtains them —
+  reproducibility does not require naming the source, only fixing the bytes.
+  `NOTICE-PROVENANCE.md` §2 and §5 updated to match (removed "cited by URL",
+  now "cited by SHA-256").
+
 ### Changed (licensing and trademark round)
 
 - **Trademark risk corrected downward (A15 resolved).** The previous round

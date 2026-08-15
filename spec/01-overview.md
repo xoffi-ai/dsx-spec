@@ -51,10 +51,14 @@ than silently ignore data it does not understand.
 
 **Known limits of this guarantee in `v0.1`, stated here rather than only in an
 appendix:** reduction of an open-ended show (`duration_ms: null`, §10.8) is
-**undefined** — §4.4 derives the sample count from the duration (A25). And the
-normative test vectors that would make "bit-identical" verifiable **do not yet
-exist** (A1); until they are published, this section states an intention, not a
-demonstrated property.
+**undefined** — §4.4 derives the sample count from the duration (A25). Five
+hand-computed test vectors now exist and pass (`conformance/sampling/`,
+`tools/dsx_sample.py`), which makes "bit-identical" a demonstrated property for
+the cases they cover — but coverage is not exhaustive: `poly`/`linear`
+segments, `hold` interpolation, before/after-track clamping and the RGBW
+channel-drop path are not yet vectorised (A36). This section is a demonstrated
+property with a known-partial proof, not the pure intention it was until
+2026-08-15.
 
 This is the property that makes DSX adoptable. A manufacturer whose hardware
 consumes fixed-rate frame arrays does not need to implement polynomial

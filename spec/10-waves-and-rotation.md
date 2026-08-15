@@ -7,12 +7,12 @@
 ## 10.1 The problem
 
 Of the formats for which a sample or a public specification was actually
-obtained — `.skyc` / `.skyb` (Appendix B.1), Skybrush CSV, VVIZ — none models
+obtained — `.skyb` (Appendix B.1), CSV exports, VVIZ — none models
 more than **one** takeoff and **one** landing per airframe. The identity of an
 aircraft and its place in the choreography are the same thing: drone *n* flies
 trajectory *n*, from the ground, back to the ground, once.
 
-For `.dac`, `.bin`, `.path` / `.path3` and Drotek JSON **no sample was
+For `.dac`, `.bin`, `.path` / `.path3` and the vendor JSON variants **no sample was
 obtained** (A28), so nothing is claimed about them here. If any of them does
 model aircraft rotation, this section is wrong and the correction is welcome —
 see [`CONTRIBUTING.md`](../CONTRIBUTING.md).

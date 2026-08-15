@@ -1,0 +1,8 @@
+{
+  "kind": "light_program",
+  "channels": ["R", "G", "B", "W"],
+  "color_space": "sRGB",
+  "ops": [
+    { "t_ms": 0, "op": "set", "channels": { "R": 255, "G": 0, "B": 0, "W": 128 } }
+  ]
+}

@@ -1,7 +1,9 @@
 # 9. Conformance
 
-*Outline. The suite itself lives in `conformance/` and is the normative
-artefact; this chapter describes what it must contain.*
+*The suite itself lives in `conformance/` and is the normative artefact; this
+chapter describes what it must contain. `sampling/` exists and runs in CI
+(5 vectors); `roundtrip/`, `identity/`, `errors/` and `determinism/` are still
+outline only — see `conformance/README.md` for the current state.*
 
 An implementation declares:
 

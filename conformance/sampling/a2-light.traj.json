@@ -1,0 +1,21 @@
+{
+  "kind": "segments",
+  "interp": "constant",
+  "start_ms": 0,
+  "start_point": [
+    0.0,
+    0.0,
+    10.0
+  ],
+  "segments": [
+    {
+      "dt_ms": 4000,
+      "type": "constant",
+      "p": [
+        0.0,
+        0.0,
+        10.0
+      ]
+    }
+  ]
+}

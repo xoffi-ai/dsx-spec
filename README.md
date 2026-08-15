@@ -7,14 +7,17 @@ flight-capable and machine-validatable, not just viewable.**
 > in public *on purpose*: to be reviewed, contradicted and improved by the people
 > who actually fly shows. See [GOVERNANCE.md](GOVERNANCE.md).
 >
-> **You cannot write a reader from this draft yet.** An external review on
-> 2026-08-15 established that §4.2/§4.3 do not yet pin down the two central data
-> structures — the segment track and the sampled array — so even the simplest
-> profile (L0) is not implementable from the prose alone
-> ([A31](spec/A-open-questions.md), [A32](spec/A-open-questions.md)). The safety,
-> device-profile and rotation models are complete and machine-checked; the wire
-> format is the gap, and it is the next thing to be written. Saying so here is
-> cheaper than letting an implementer discover it.
+> **You can write an L0 reader from this draft now — that claim is backed by a
+> test, not just prose.** An external review on 2026-08-15 found that §4.2/§4.3
+> did not yet pin down the two central data structures; both are now fully
+> specified, and `tools/dsx_sample.py` is a clean-room implementation from the
+> text alone that passes five hand-computed test vectors
+> (`conformance/sampling/`, run in CI). What remains open: vector coverage is
+> not exhaustive ([A36](spec/A-open-questions.md)), the `.dsb` binary encoding
+> is still an outline (A2), and open-ended shows (`duration_ms: null`) have no
+> defined sampling behaviour yet (A25). See
+> [`spec/A-open-questions.md`](spec/A-open-questions.md) for the current,
+> honest list.
 
 ---
 
@@ -26,18 +29,19 @@ Every drone show format in use today is in one of two states:
 |---|---|---|---|
 | **VVIZ** | yes | **no** — the published specification states it is not intended to output flight-ready path data [^vviz] | no |
 | **.skyc / .skyb** | source-readable (GPL), no public spec | yes | no |
-| **.dac, .bin, .path/.path3, .essp, Drotek .json, .packedshow, .ddsf** | no public specification located [^located] | yes | no |
+| **.dac, .bin, .path/.path3, .essp, vendor .json variants, .packedshow, .ddsf** | no public specification located [^located] | yes | no |
 | **CSV** | trivially open | partially | no |
-| **DSX** | **yes** | designed for it — **not yet flown** | schema + §10 rules today; sampler vectors outstanding |
+| **DSX** | **yes** | designed for it — **not yet flown** | schema + §10 rules + sampler vectors, all tested today |
 
 There is currently **no open format that is both flight-capable and
 independently verifiable**. That is the gap DSX exists to close — and the last
 row is deliberately not a row of green ticks. DSX is a v0.1 draft: the
-specification and the JSON Schemas exist and are testable today, the `.dsb`
-encoding and the sampler test vectors are not written yet, and no aircraft has
-flown a DSX file. Claiming otherwise would reproduce the exact behaviour this
-project was created to replace. See `conformance/README.md` for what the suite
-actually covers and `spec/A-open-questions.md` for what is still open.
+specification, JSON Schemas and normative sampler are tested today (five
+hand-computed vectors, not exhaustive — A36), the `.dsb` encoding is still an
+outline, and no aircraft has flown a DSX file. Claiming otherwise would
+reproduce the exact behaviour this project was created to replace. See
+`conformance/README.md` for what the suite actually covers and
+`spec/A-open-questions.md` for what is still open.
 
 Consequences of that gap are documented, not hypothetical: shows are exchanged
 as CSV and lose safety metadata; geofence fields exist in formats but are never
@@ -57,14 +61,16 @@ failure mode.
 
 The `.dsx` → `.dsb` compiler **is specified to be deterministic**: identical
 input must produce byte-identical output, which is what makes a show file
-auditable. The `.dsb` encoding is not yet written (A1), so this is a
+auditable. The `.dsb` encoding is not yet written (A2), so *that* half is a
 requirement on implementations, not a property you can test today.
 
 **Interoperability is a guarantee of the format, not a service of a server.**
 Every conforming `.dsx` MUST be reducible, via a normative sampling algorithm,
 to `t, x, y, z, R, G, B` at any frame rate — bit-identically in every
 implementation. Any existing system therefore has an import path on day one,
-without understanding polynomials.
+without understanding polynomials. This is now backed by a reference
+implementation (`tools/dsx_sample.py`) and five hand-computed test vectors,
+not only by prose — see `conformance/sampling/`.
 
 **Conformance profiles** rather than a feature checklist:
 
@@ -92,11 +98,15 @@ profiles/      regulatory overlays — planned, currently a README stating the
                intended identifiers; no overlay is written
 examples/      minimal-l0, rotation-l2, continuous-l2 (show-l1 and pyro-l2 are
                named in examples/README.md but not yet written)
-conformance/   what exists: schema checks and the semantic rules of §10.
-               The sampler, round-trip and determinism suites do not exist yet,
-               so "DSX conformant" is not yet a claim anyone can earn
+conformance/   what exists: schema checks, the semantic rules of §10, archive
+               integrity and the normative sampler (5 vectors). Round-trip and
+               determinism suites do not exist yet, so "DSX conformant" is not
+               yet a claim anyone can earn end to end
 proposals/     change proposals (see proposals/TEMPLATE.md)
-tools/         observe_skyb.py — byte-level inspection used to write Appendix B
+tools/         dsx_sample.py — reference sampler for §4.4, the normative
+               reduction to t,x,y,z,R,G,B; dsx_seal.py — content hash and
+               signature; observe_skyb.py — byte-level inspection used to
+               write Appendix B
 ```
 
 ## Licensing

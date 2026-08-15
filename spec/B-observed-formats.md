@@ -19,10 +19,19 @@ reproducible by anyone who downloads the same files and reads the bytes.
 
 ### B.1.1 Observation basis
 
-Thirteen fixture files published in the `libskybrush` repository
-(<https://github.com/skybrush-io/libskybrush>) under `test/fixtures/`.
-Retrieved 15 Aug 2026. SHA-256 recorded so the observations
-can be reproduced against the exact bytes examined:
+Thirteen fixture files published under a permissive test-fixtures path of a
+publicly readable, GPL-licensed open-source project that implements this
+container format — the same project named generically throughout
+`NOTICE-PROVENANCE.md`. Retrieved 15 Aug 2026. SHA-256 recorded below so the
+observations can be reproduced by anyone who obtains the same bytes, without
+this document having to identify where they came from.
+
+No third party is named anywhere in this specification. That is a deliberate
+choice, not an oversight: this appendix is a source citation for
+reproducibility, not a comparison, and the SHA-256 of each file is sufficient
+to prove which bytes were examined to anyone who already has them or can
+obtain them independently. Nothing is claimed here about any product, vendor
+or its quality — only about the bytes of thirteen published files.
 
 | File | Bytes | SHA-256 |
 |---|---|---|
@@ -159,12 +168,12 @@ alone.
 | Format | Status |
 |---|---|
 | `.skyc` outer container | ZIP; member layout to be documented from a published sample |
-| `.dac` (HighGreat) | no public sample located |
-| `.bin` (Litebee) | no public sample located |
-| `.path` / `.path3` (DSS) | no public sample located |
-| Drotek JSON | no public sample located |
-| VVIZ | publicly specified by its vendors; no reverse observation required |
-| DJI WPML | publicly specified by the vendor; no reverse observation required |
+| `.dac` | no public sample located |
+| `.bin` | no public sample located |
+| `.path` / `.path3` | no public sample located |
+| vendor JSON variants | no public sample located |
+| VVIZ | publicly specified; no reverse observation required |
+| WPML | publicly specified; no reverse observation required |
 
 Contributions to this appendix are welcome and are governed by the separation-of-roles
 boundary stated at the top.
