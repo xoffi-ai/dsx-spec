@@ -7,6 +7,13 @@
 | `rotation-l2/` | L2 | enumerated rotation: 42 min from 6 aircraft flying 450 s sorties (§10.1–§10.7) |
 | `continuous-l2/` | L2 | **indefinite** show: `wave_cycle`, steady-state closure, drain plan (§10.8) |
 
+No example carries a **payload** yet, and no bundled device profile declares a
+`payload_slot`, so §6 — actuators, pyro, arm/disarm state, `prefire_latency_ms`,
+interlocks — is the one normative section with no reference file behind it. That
+is the most safety-critical section in the specification, so the gap is recorded
+as A40 in [Appendix A](../spec/A-open-questions.md) rather than left implied by
+a missing table row.
+
 Each example directory is the **unzipped content** of a `.dsx` file. To build one:
 
 ```sh

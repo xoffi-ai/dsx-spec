@@ -15,8 +15,34 @@
   worked file at all.
 - **`check_archive.py` now discovers example directories instead of iterating
   a hard-coded list.** A hand-maintained list is how a new example ships
-  unchecked -- which is precisely what had happened: `show-l1` existed on disk
-  and no suite looked at it.
+  unchecked: `check_container.py` and `check_profiles.py` glob the directory
+  and picked `show-l1` up by themselves, while `check_archive.py` -- the suite
+  that checks archive completeness, resource validity and seals -- named three
+  directories explicitly and silently skipped the fourth.
+- **`run_schema_checks.py::binding` now checks all six envelope axes and the
+  separation floor**, not `peak_speed_xy_ms` alone, and runs over the L1
+  example as well. A show that climbs faster than the airframe may is exactly
+  as unflyable as one that flies sideways too fast.
+- **`tools/build_examples.py` measures `declared_envelope` from the tracks it
+  generates** and refuses to build an example whose measured demand exceeds the
+  bound device profile, or whose closest approach falls below
+  `safety.min_separation_m` (measured for `show-l1`: 4.99 m at t=80380 ms
+  against a 2.5 m floor; peak 3.14 m/s xy, 3.53 up, 2.0 down). §5 calls the
+  declared envelope the measured demand of *this* show; writing it by hand is
+  how it silently stops being true.
+- The L1 tracks are **C¹ at every joint**. §4.2.2 forbids re-parameterising a
+  segment at playback, so a corner between two segments is a real velocity step;
+  the climb, transit and descent control points are placed to match the circle's
+  tangent instead. Measured residual over 45 joints: 0.012 m/s.
+
+### Found, not fixed (A40)
+
+- **No example carries a payload, and no bundled device profile declares a
+  `payload_slot`.** §6 -- actuators, `authority`, `prefire_latency_ms`,
+  `hazard`, interlocks, arm/disarm -- is the only normative section with no
+  reference file behind it, which matters because §6 is where the two threat
+  models of §7 diverge. Recorded as A40 rather than left implied by a
+  `*(to be written)*` row in `examples/README.md`.
 
 ### Added (whitepaper 01 -- "Termination is Data", 2026-08-16)
 
