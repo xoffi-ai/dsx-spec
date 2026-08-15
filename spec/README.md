@@ -18,6 +18,25 @@
 | A | [Open questions](A-open-questions.md) | living |
 | B | [Observed third-party formats](B-observed-formats.md) | living |
 
+## Governing language
+
+**English is the sole authoritative language of this specification.**
+Translations are published as a convenience and are **informative, never
+normative**. Where a translation and the English text differ — in wording, in a
+conformance keyword, or in a numeric value — **the English text governs, and a
+reader MUST resolve the question against it.**
+
+This is not boilerplate. A conformance keyword carries the safety obligation:
+if `MUST` is rendered as a recommendation in one language, an implementer in
+that language builds an aircraft-facing tool that omits a required check and
+believes itself conformant. The rule above exists so that such a defect is
+always resolvable against a single text rather than argued between two.
+
+Every translated page therefore states the English commit it was made from, and
+`conformance/check_translations.py` marks it **stale** as soon as the English
+source moves. A stale translation is a known defect with a name, not a silent
+one. See [`TRANSLATIONS.md`](../TRANSLATIONS.md).
+
 ## Conformance keywords
 
 The key words **MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**,

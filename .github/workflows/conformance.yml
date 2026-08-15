@@ -22,6 +22,11 @@ jobs:
       - run: python3 conformance/check_rotation.py
       - run: python3 conformance/check_archive.py
       - run: python3 conformance/run_sampling_checks.py
+      # The translation checker is self-tested first: a checker whose failure
+      # path is never exercised cannot be distinguished from one that always
+      # returns success.
+      - run: python3 conformance/check_translations.py --selftest
+      - run: python3 conformance/check_translations.py
       - name: examples are sealed with the committed content hash
         run: |
           python3 tools/dsx_seal.py verify examples/rotation-l2

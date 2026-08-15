@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+### Added (multilingual publication, 2026-08-16)
+
+- **`TRANSLATIONS.md` and `translations/`.** DSX will be published in
+  zh-Hans, ja, ko, de and es. English is declared the **sole authoritative
+  language** in `spec/README.md`; translations are informative and the English
+  text governs any difference. This is stated as a safety rule rather than a
+  legal formality: a `MUST` rendered as a recommendation produces an
+  implementer who omits a required check and believes himself conformant.
+- **Drift is detected mechanically.** Every translated file carries the
+  SHA-256 of the English source it was made from, so the translation is marked
+  **stale** the moment that source changes -- the failure mode where two
+  languages quietly describe different formats is not available here.
+- **`conformance/check_translations.py`**, in CI. Errors on a missing or
+  malformed header, an undeclared language, a vanished source, a dropped
+  governing-language notice, a translation of Appendix A (which changes too
+  often to stay true), and an unreviewed machine translation of section 7.
+  Stale is a WARN, deliberately: making it an error would block every English
+  correction until six translations catch up, and a check that blocks ordinary
+  work gets switched off.
+- **The checker is self-tested** (`--selftest`, 7 synthetic cases, also in CI).
+  A checker whose failure path is never exercised cannot be distinguished from
+  one that returns success unconditionally.
+- First translation: `translations/zh-Hans/spec/README.md`, marked
+  `machine, unreviewed` in its own header rather than presented as finished.
+
 ### Added (container security, 2026-08-16)
 
 - **A33 resolved — §2.1.1 "Entry names" and §2.1.2 "Resource limits" added.**

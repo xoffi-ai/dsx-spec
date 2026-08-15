@@ -103,6 +103,10 @@ conformance/   what exists: container safety (§2.1.1/§2.1.2), schema checks,
                sampler (5 vectors). Round-trip and determinism suites do not
                exist yet, so "DSX conformant" is not yet a claim anyone can
                earn end to end
+translations/  zh-Hans, ja, ko, de, es. English is the sole authoritative
+               language; translations are informative and carry the hash of
+               the English source they were made from, so drift is detected
+               rather than discovered. See TRANSLATIONS.md
 proposals/     change proposals (see proposals/TEMPLATE.md)
 tools/         dsx_sample.py — reference sampler for §4.4, the normative
                reduction to t,x,y,z,R,G,B; dsx_seal.py — content hash and

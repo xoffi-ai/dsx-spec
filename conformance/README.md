@@ -23,6 +23,7 @@ python3 conformance/run_schema_checks.py    # schema-level
 python3 conformance/check_rotation.py       # semantic rules of section 10
 python3 conformance/check_archive.py        # archive-level
 python3 conformance/run_sampling_checks.py  # normative sampler (section 4.4)
+python3 conformance/check_translations.py   # translation integrity (--selftest to verify the checker)
 ```
 
 | Script | What it proves |
@@ -31,6 +32,7 @@ python3 conformance/run_sampling_checks.py  # normative sampler (section 4.4)
 | `run_schema_checks.py` | the schema accepts the examples and **rejects** every field whose absence causes conversion accidents — including misspelt safety fields, since a closed core is what makes a typo an error instead of a silent deletion (section 8.1.1) |
 | `check_rotation.py` | the semantic rules of section 10 that JSON Schema cannot express: interval coverage, exclusivity, turnaround and energy closure, the steady-state inequalities of 10.8 |
 | `check_archive.py` | the archive around the manifest: every referenced resource is carried (2.1), every track and light file validates against `schema/resource.schema.json` (section 4), `content_hash` recomputes and the signature verifies (2.3.1), and a declared loop actually closes in its own trajectory (R10.21) — see `eval_seam`, which needs the boundary segments to be `bezier` (A37) |
+| `check_translations.py` | that every translation names the English commit it was made from and is marked **stale** the moment that source moves, that the governing-language notice cannot be dropped, and that an unreviewed machine translation of §7 is refused (TRANSLATIONS.md). `--selftest` builds a synthetic case for each error class, so the checker is itself checked |
 | `run_sampling_checks.py` | `tools/dsx_sample.py` reproduces five hand-computed vectors byte for byte (`sampling/`, see its `INDEX.md` for the derivations), plus that a `strobe` op without `duty` is rejected — by the tool *and* by the schema — and that a channel beyond R/G/B is reported as a WARN, not dropped silently (§4.4.5) |
 
 Each script prints its own `n/n passed`. Counts are deliberately not repeated
