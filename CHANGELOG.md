@@ -1,5 +1,30 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **Section 10 — waves, sorties and rotation operation.** Three-level model
+  (role / airframe / sortie) enabling shows longer than one battery charge.
+  Rules R10.1–R10.14: role coverage, module exclusivity, turnaround closure,
+  ground-service capacity, battery-pool closure, per-sortie energy closure,
+  cross-wave separation, corridor intersection, no-silent-degradation.
+- `conformance/check_rotation.py` — semantic validator for the rules JSON
+  Schema cannot express. Nine negative tests prove each rule bites.
+- `examples/rotation-l2/` — 42-minute show flown by 6 aircraft with 7.5
+  minutes of endurance each; demonstrates why two wave groups are
+  insufficient at a 420 s turnaround and three are required.
+- **Appendix B — observed third-party formats.** SKYB container framing,
+  block typing and event records verified against 13 published fixtures with
+  recorded SHA-256. Written under the clean-room boundary of
+  `NOTICE-PROVENANCE.md` §4.
+
+### Fixed
+- Schema `$ref` resolution went to the network and silently never resolved.
+  Now resolved from a local registry: the toolchain validates **air-gapped**,
+  as the operating rules DSX targets require. Fixing this immediately exposed
+  an incomplete `termination` block that had been passing unchecked.
+
+
 ## v0.1-draft — 2026-08-15
 
 Initial public draft. Nothing is stable.

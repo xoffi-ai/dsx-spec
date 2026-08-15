@@ -14,7 +14,9 @@
 | 7 | [Safety and termination](07-safety-and-termination.md) | draft |
 | 8 | [Extensions, profiles and versioning](08-extensions-and-versioning.md) | draft |
 | 9 | [Conformance](09-conformance.md) | outline |
+| 10 | [Waves, sorties and rotation operation](10-waves-and-rotation.md) | draft |
 | A | [Open questions](A-open-questions.md) | living |
+| B | [Observed third-party formats](B-observed-formats.md) | living |
 
 ## Conformance keywords
 

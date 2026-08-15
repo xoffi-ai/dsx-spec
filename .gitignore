@@ -6,3 +6,9 @@ __pycache__/
 *.pyc
 .venv/
 node_modules/
+
+# Third-party fixture files are GPL-licensed and are NOT redistributed here.
+# tools/observe_skyb.py fetches/reads them from their upstream location.
+*.skyb
+*.skyc
+fixtures/

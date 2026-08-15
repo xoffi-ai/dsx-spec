@@ -46,3 +46,19 @@ XML form, which is directly embeddable.
 | # | Question |
 |---|---|
 | A15 | The three-letter name "DSX" collides with existing marks in adjacent classes. Registrable subject matter is expected to be the compound wordmark and the conformance badge rather than the bare letters. Fallback candidates: `ODSX`, `OpenDSX`. To be resolved **before** external implementers depend on the name. |
+
+## Rotation operation (section 10)
+
+| # | Question |
+|---|---|
+| A16 | `turnaround.min_s` is declared per show. Real turnaround differs by group, by cycle and by ambient temperature. A per-group or per-sortie override is likely needed; deferred until an operator has run the model against a real changeover. |
+| A17 | R10.10 models ground service as a bay count and a throughput rate. Real service is a queue with crew skill, battery logistics and weather holds. The current check is a necessary condition, not a sufficient one, and is documented as such. |
+| A18 | Corridor/flight-volume intersection (R10.8) is specified but not yet implemented in the conformance suite: it needs a geometry dependency the suite deliberately does not have yet. |
+| A19 | Whether a sortie may change `wave` mid-flight (an aircraft diverted into another group's return) — currently forbidden by construction. No operator has been asked whether that matters. |
+
+## Third-party format observation
+
+| # | Question |
+|---|---|
+| A20 | The 4-byte field at offset 6 of a v2 SKYB header is unresolved (Appendix B.1.4). Eleven CRC-32 variants, four non-CRC checksums and three truncated hashes over five byte ranges were excluded. Until it is identified, DSX importers MUST NOT claim to verify SKYB integrity. |
+| A21 | No public sample has been located for `.dac`, `.bin`, `.path`/`.path3` or Drotek JSON. Appendix B stays incomplete until one is contributed. |

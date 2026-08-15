@@ -1,0 +1,1215 @@
+{
+  "dsx": "0.1",
+  "profile": "L2",
+  "show": {
+    "title": "Rotation example - 3 groups, 2 cycles",
+    "duration_ms": 2535000,
+    "notes": "Three groups are required: with 420 s turnaround, two groups cannot cover the role continuously."
+  },
+  "frame": {
+    "type": "ENU",
+    "handedness": "right",
+    "units": "m",
+    "bearing_deg": 0.0,
+    "origin": {
+      "lat": 22.5431,
+      "lon": 114.0579,
+      "alt_m": 12.4,
+      "alt_ref": "AMSL",
+      "geoid": "EGM2008",
+      "datum": "WGS84"
+    }
+  },
+  "time": {
+    "base": "ms",
+    "start": {
+      "mode": "countdown"
+    }
+  },
+  "fleet": [
+    {
+      "id": "grp-A",
+      "count": 2,
+      "device_profile": "devices/example@aircraft@rev1.dsxp",
+      "device_type_id": "00000000-0000-4000-8000-000000000001",
+      "device_mode": "rgb-30hz"
+    },
+    {
+      "id": "grp-B",
+      "count": 2,
+      "device_profile": "devices/example@aircraft@rev1.dsxp",
+      "device_type_id": "00000000-0000-4000-8000-000000000001",
+      "device_mode": "rgb-30hz"
+    },
+    {
+      "id": "grp-C",
+      "count": 2,
+      "device_profile": "devices/example@aircraft@rev1.dsxp",
+      "device_type_id": "00000000-0000-4000-8000-000000000001",
+      "device_mode": "rgb-30hz"
+    }
+  ],
+  "roles": [
+    {
+      "id": "r0001",
+      "trajectory": "traj/r0001.json",
+      "light": "light/r0001.json",
+      "active_ms": [
+        15000,
+        2535000
+      ]
+    },
+    {
+      "id": "r0002",
+      "trajectory": "traj/r0002.json",
+      "light": "light/r0002.json",
+      "active_ms": [
+        15000,
+        2535000
+      ]
+    }
+  ],
+  "wave_groups": [
+    {
+      "id": "A",
+      "modules": [
+        "M1",
+        "M2"
+      ]
+    },
+    {
+      "id": "B",
+      "modules": [
+        "M3",
+        "M4"
+      ]
+    },
+    {
+      "id": "C",
+      "modules": [
+        "M5",
+        "M6"
+      ]
+    }
+  ],
+  "waves": [
+    {
+      "id": "A1",
+      "group": "A",
+      "takeoff_ms": 0,
+      "land_complete_ms": 465000
+    },
+    {
+      "id": "B1",
+      "group": "B",
+      "takeoff_ms": 420000,
+      "land_complete_ms": 885000
+    },
+    {
+      "id": "C1",
+      "group": "C",
+      "takeoff_ms": 840000,
+      "land_complete_ms": 1305000
+    },
+    {
+      "id": "A2",
+      "group": "A",
+      "takeoff_ms": 1260000,
+      "land_complete_ms": 1725000
+    },
+    {
+      "id": "B2",
+      "group": "B",
+      "takeoff_ms": 1680000,
+      "land_complete_ms": 2145000
+    },
+    {
+      "id": "C2",
+      "group": "C",
+      "takeoff_ms": 2100000,
+      "land_complete_ms": 2565000
+    }
+  ],
+  "assignments": [
+    {
+      "role": "r0001",
+      "sortie": "A-001/s1",
+      "serves_ms": [
+        15000,
+        435000
+      ]
+    },
+    {
+      "role": "r0001",
+      "sortie": "B-001/s1",
+      "serves_ms": [
+        435000,
+        855000
+      ]
+    },
+    {
+      "role": "r0001",
+      "sortie": "C-001/s1",
+      "serves_ms": [
+        855000,
+        1275000
+      ]
+    },
+    {
+      "role": "r0001",
+      "sortie": "A-001/s2",
+      "serves_ms": [
+        1275000,
+        1695000
+      ]
+    },
+    {
+      "role": "r0001",
+      "sortie": "B-001/s2",
+      "serves_ms": [
+        1695000,
+        2115000
+      ]
+    },
+    {
+      "role": "r0001",
+      "sortie": "C-001/s2",
+      "serves_ms": [
+        2115000,
+        2535000
+      ]
+    },
+    {
+      "role": "r0002",
+      "sortie": "A-002/s1",
+      "serves_ms": [
+        15000,
+        435000
+      ]
+    },
+    {
+      "role": "r0002",
+      "sortie": "B-002/s1",
+      "serves_ms": [
+        435000,
+        855000
+      ]
+    },
+    {
+      "role": "r0002",
+      "sortie": "C-002/s1",
+      "serves_ms": [
+        855000,
+        1275000
+      ]
+    },
+    {
+      "role": "r0002",
+      "sortie": "A-002/s2",
+      "serves_ms": [
+        1275000,
+        1695000
+      ]
+    },
+    {
+      "role": "r0002",
+      "sortie": "B-002/s2",
+      "serves_ms": [
+        1695000,
+        2115000
+      ]
+    },
+    {
+      "role": "r0002",
+      "sortie": "C-002/s2",
+      "serves_ms": [
+        2115000,
+        2535000
+      ]
+    }
+  ],
+  "handovers": [
+    {
+      "id": "h1",
+      "from_wave": "A1",
+      "to_wave": "B1",
+      "window_ms": [
+        420000,
+        465000
+      ],
+      "both_airborne": true,
+      "cross_wave_separation_m": 4.0,
+      "corridors": [
+        "in-B1",
+        "out-A1"
+      ],
+      "roles_transferred": [
+        "r0001",
+        "r0002"
+      ],
+      "abort_action": "hold_incoming"
+    },
+    {
+      "id": "h2",
+      "from_wave": "B1",
+      "to_wave": "C1",
+      "window_ms": [
+        840000,
+        885000
+      ],
+      "both_airborne": true,
+      "cross_wave_separation_m": 4.0,
+      "corridors": [
+        "in-C1",
+        "out-B1"
+      ],
+      "roles_transferred": [
+        "r0001",
+        "r0002"
+      ],
+      "abort_action": "hold_incoming"
+    },
+    {
+      "id": "h3",
+      "from_wave": "C1",
+      "to_wave": "A2",
+      "window_ms": [
+        1260000,
+        1305000
+      ],
+      "both_airborne": true,
+      "cross_wave_separation_m": 4.0,
+      "corridors": [
+        "in-A2",
+        "out-C1"
+      ],
+      "roles_transferred": [
+        "r0001",
+        "r0002"
+      ],
+      "abort_action": "hold_incoming"
+    },
+    {
+      "id": "h4",
+      "from_wave": "A2",
+      "to_wave": "B2",
+      "window_ms": [
+        1680000,
+        1725000
+      ],
+      "both_airborne": true,
+      "cross_wave_separation_m": 4.0,
+      "corridors": [
+        "in-B2",
+        "out-A2"
+      ],
+      "roles_transferred": [
+        "r0001",
+        "r0002"
+      ],
+      "abort_action": "hold_incoming"
+    },
+    {
+      "id": "h5",
+      "from_wave": "B2",
+      "to_wave": "C2",
+      "window_ms": [
+        2100000,
+        2145000
+      ],
+      "both_airborne": true,
+      "cross_wave_separation_m": 4.0,
+      "corridors": [
+        "in-C2",
+        "out-B2"
+      ],
+      "roles_transferred": [
+        "r0001",
+        "r0002"
+      ],
+      "abort_action": "hold_incoming"
+    }
+  ],
+  "corridors": [
+    {
+      "id": "in-A1",
+      "wave": "A1",
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        0,
+        15000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-A1",
+      "wave": "A1",
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        435000,
+        465000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "in-B1",
+      "wave": "B1",
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        420000,
+        435000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-B1",
+      "wave": "B1",
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        855000,
+        885000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "in-C1",
+      "wave": "C1",
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        840000,
+        855000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-C1",
+      "wave": "C1",
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        1275000,
+        1305000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "in-A2",
+      "wave": "A2",
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        1260000,
+        1275000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-A2",
+      "wave": "A2",
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        1695000,
+        1725000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "in-B2",
+      "wave": "B2",
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        1680000,
+        1695000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-B2",
+      "wave": "B2",
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        2115000,
+        2145000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "in-C2",
+      "wave": "C2",
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        2100000,
+        2115000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-C2",
+      "wave": "C2",
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "active_ms": [
+        2535000,
+        2565000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    }
+  ],
+  "launch_stack": {
+    "modules": [
+      {
+        "id": "M1",
+        "origin_m": [
+          0.0,
+          0.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 2,
+        "rows": 2,
+        "levels": 2,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M2",
+        "origin_m": [
+          10.0,
+          0.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 2,
+        "rows": 2,
+        "levels": 2,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M3",
+        "origin_m": [
+          20.0,
+          0.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 2,
+        "rows": 2,
+        "levels": 2,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M4",
+        "origin_m": [
+          30.0,
+          0.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 2,
+        "rows": 2,
+        "levels": 2,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M5",
+        "origin_m": [
+          40.0,
+          0.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 2,
+        "rows": 2,
+        "levels": 2,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M6",
+        "origin_m": [
+          50.0,
+          0.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 2,
+        "rows": 2,
+        "levels": 2,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      }
+    ]
+  },
+  "turnaround": {
+    "policy": "swap",
+    "min_s": 420,
+    "components_s": {
+      "cooldown": 60,
+      "recover": 120,
+      "service": 90,
+      "stage": 150
+    },
+    "ground_service": {
+      "bays": 6,
+      "crew": 4,
+      "throughput_per_min": 4,
+      "battery_pool": {
+        "count": 18,
+        "charge_time_s": 2700
+      }
+    }
+  },
+  "energy": {
+    "model": "declared",
+    "per_sortie": {
+      "budget_s": 620,
+      "reserve_pct": 25,
+      "margin_policy": "reject_on_exceed"
+    }
+  },
+  "drones": [
+    {
+      "id": "A-001",
+      "fleet": "grp-A",
+      "serial": "DEMO-A001",
+      "home": {
+        "x": 3.0,
+        "y": 0.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap",
+      "sorties": [
+        {
+          "id": "s1",
+          "wave": "A1",
+          "slot": {
+            "module": "M1",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 0,
+          "land_ms": 450000,
+          "ingress": {
+            "path": "traj/in_A-001_s1.json",
+            "window_ms": [
+              0,
+              15000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_A-001_s1.json",
+            "window_ms": [
+              435000,
+              450000
+            ]
+          },
+          "energy_use_s": 450
+        },
+        {
+          "id": "s2",
+          "wave": "A2",
+          "slot": {
+            "module": "M1",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 1260000,
+          "land_ms": 1710000,
+          "ingress": {
+            "path": "traj/in_A-001_s2.json",
+            "window_ms": [
+              1260000,
+              1275000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_A-001_s2.json",
+            "window_ms": [
+              1695000,
+              1710000
+            ]
+          },
+          "energy_use_s": 450
+        }
+      ]
+    },
+    {
+      "id": "A-002",
+      "fleet": "grp-A",
+      "serial": "DEMO-A002",
+      "home": {
+        "x": 6.0,
+        "y": 0.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap",
+      "sorties": [
+        {
+          "id": "s1",
+          "wave": "A1",
+          "slot": {
+            "module": "M2",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 0,
+          "land_ms": 450000,
+          "ingress": {
+            "path": "traj/in_A-002_s1.json",
+            "window_ms": [
+              0,
+              15000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_A-002_s1.json",
+            "window_ms": [
+              435000,
+              450000
+            ]
+          },
+          "energy_use_s": 450
+        },
+        {
+          "id": "s2",
+          "wave": "A2",
+          "slot": {
+            "module": "M2",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 1260000,
+          "land_ms": 1710000,
+          "ingress": {
+            "path": "traj/in_A-002_s2.json",
+            "window_ms": [
+              1260000,
+              1275000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_A-002_s2.json",
+            "window_ms": [
+              1695000,
+              1710000
+            ]
+          },
+          "energy_use_s": 450
+        }
+      ]
+    },
+    {
+      "id": "B-001",
+      "fleet": "grp-B",
+      "serial": "DEMO-B001",
+      "home": {
+        "x": 23.0,
+        "y": 0.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap",
+      "sorties": [
+        {
+          "id": "s1",
+          "wave": "B1",
+          "slot": {
+            "module": "M3",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 420000,
+          "land_ms": 870000,
+          "ingress": {
+            "path": "traj/in_B-001_s1.json",
+            "window_ms": [
+              420000,
+              435000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_B-001_s1.json",
+            "window_ms": [
+              855000,
+              870000
+            ]
+          },
+          "energy_use_s": 450
+        },
+        {
+          "id": "s2",
+          "wave": "B2",
+          "slot": {
+            "module": "M3",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 1680000,
+          "land_ms": 2130000,
+          "ingress": {
+            "path": "traj/in_B-001_s2.json",
+            "window_ms": [
+              1680000,
+              1695000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_B-001_s2.json",
+            "window_ms": [
+              2115000,
+              2130000
+            ]
+          },
+          "energy_use_s": 450
+        }
+      ]
+    },
+    {
+      "id": "B-002",
+      "fleet": "grp-B",
+      "serial": "DEMO-B002",
+      "home": {
+        "x": 26.0,
+        "y": 0.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap",
+      "sorties": [
+        {
+          "id": "s1",
+          "wave": "B1",
+          "slot": {
+            "module": "M4",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 420000,
+          "land_ms": 870000,
+          "ingress": {
+            "path": "traj/in_B-002_s1.json",
+            "window_ms": [
+              420000,
+              435000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_B-002_s1.json",
+            "window_ms": [
+              855000,
+              870000
+            ]
+          },
+          "energy_use_s": 450
+        },
+        {
+          "id": "s2",
+          "wave": "B2",
+          "slot": {
+            "module": "M4",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 1680000,
+          "land_ms": 2130000,
+          "ingress": {
+            "path": "traj/in_B-002_s2.json",
+            "window_ms": [
+              1680000,
+              1695000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_B-002_s2.json",
+            "window_ms": [
+              2115000,
+              2130000
+            ]
+          },
+          "energy_use_s": 450
+        }
+      ]
+    },
+    {
+      "id": "C-001",
+      "fleet": "grp-C",
+      "serial": "DEMO-C001",
+      "home": {
+        "x": 43.0,
+        "y": 0.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap",
+      "sorties": [
+        {
+          "id": "s1",
+          "wave": "C1",
+          "slot": {
+            "module": "M5",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 840000,
+          "land_ms": 1290000,
+          "ingress": {
+            "path": "traj/in_C-001_s1.json",
+            "window_ms": [
+              840000,
+              855000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_C-001_s1.json",
+            "window_ms": [
+              1275000,
+              1290000
+            ]
+          },
+          "energy_use_s": 450
+        },
+        {
+          "id": "s2",
+          "wave": "C2",
+          "slot": {
+            "module": "M5",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 2100000,
+          "land_ms": 2550000,
+          "ingress": {
+            "path": "traj/in_C-001_s2.json",
+            "window_ms": [
+              2100000,
+              2115000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_C-001_s2.json",
+            "window_ms": [
+              2535000,
+              2550000
+            ]
+          },
+          "energy_use_s": 450
+        }
+      ]
+    },
+    {
+      "id": "C-002",
+      "fleet": "grp-C",
+      "serial": "DEMO-C002",
+      "home": {
+        "x": 46.0,
+        "y": 0.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap",
+      "sorties": [
+        {
+          "id": "s1",
+          "wave": "C1",
+          "slot": {
+            "module": "M6",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 840000,
+          "land_ms": 1290000,
+          "ingress": {
+            "path": "traj/in_C-002_s1.json",
+            "window_ms": [
+              840000,
+              855000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_C-002_s1.json",
+            "window_ms": [
+              1275000,
+              1290000
+            ]
+          },
+          "energy_use_s": 450
+        },
+        {
+          "id": "s2",
+          "wave": "C2",
+          "slot": {
+            "module": "M6",
+            "column": 0,
+            "row": 0,
+            "level": 0
+          },
+          "takeoff_ms": 2100000,
+          "land_ms": 2550000,
+          "ingress": {
+            "path": "traj/in_C-002_s2.json",
+            "window_ms": [
+              2100000,
+              2115000
+            ]
+          },
+          "egress": {
+            "path": "traj/out_C-002_s2.json",
+            "window_ms": [
+              2535000,
+              2550000
+            ]
+          },
+          "energy_use_s": 450
+        }
+      ]
+    }
+  ],
+  "safety": {
+    "min_separation_m": 2.5
+  },
+  "termination": {
+    "channel": "independent",
+    "escalation": [
+      "hold",
+      "coordinated_rth",
+      "land_in_place",
+      "disarm"
+    ],
+    "rth_availability": {
+      "default_interval_ms": 15000,
+      "adaptive": true,
+      "windows": [
+        {
+          "from_ms": 0,
+          "to_ms": 420000,
+          "feasible": true,
+          "interval_ms": 15000
+        },
+        {
+          "from_ms": 420000,
+          "to_ms": 465000,
+          "feasible": false,
+          "reason": "handover h1: two waves airborne with differing energy reserve",
+          "available_escalation": [
+            "hold",
+            "land_in_place",
+            "disarm"
+          ]
+        },
+        {
+          "from_ms": 465000,
+          "to_ms": 840000,
+          "feasible": true,
+          "interval_ms": 15000
+        },
+        {
+          "from_ms": 840000,
+          "to_ms": 885000,
+          "feasible": false,
+          "reason": "handover h2: two waves airborne with differing energy reserve",
+          "available_escalation": [
+            "hold",
+            "land_in_place",
+            "disarm"
+          ]
+        },
+        {
+          "from_ms": 885000,
+          "to_ms": 1260000,
+          "feasible": true,
+          "interval_ms": 15000
+        },
+        {
+          "from_ms": 1260000,
+          "to_ms": 1305000,
+          "feasible": false,
+          "reason": "handover h3: two waves airborne with differing energy reserve",
+          "available_escalation": [
+            "hold",
+            "land_in_place",
+            "disarm"
+          ]
+        },
+        {
+          "from_ms": 1305000,
+          "to_ms": 1680000,
+          "feasible": true,
+          "interval_ms": 15000
+        },
+        {
+          "from_ms": 1680000,
+          "to_ms": 1725000,
+          "feasible": false,
+          "reason": "handover h4: two waves airborne with differing energy reserve",
+          "available_escalation": [
+            "hold",
+            "land_in_place",
+            "disarm"
+          ]
+        },
+        {
+          "from_ms": 1725000,
+          "to_ms": 2100000,
+          "feasible": true,
+          "interval_ms": 15000
+        },
+        {
+          "from_ms": 2100000,
+          "to_ms": 2145000,
+          "feasible": false,
+          "reason": "handover h5: two waves airborne with differing energy reserve",
+          "available_escalation": [
+            "hold",
+            "land_in_place",
+            "disarm"
+          ]
+        },
+        {
+          "from_ms": 2145000,
+          "to_ms": 2535000,
+          "feasible": true,
+          "interval_ms": 15000
+        }
+      ]
+    },
+    "geofence": {
+      "soft": {
+        "type": "bubble",
+        "radius_m": 4.0,
+        "action": "auto_land",
+        "timeout_ms": 1500
+      },
+      "hard": {
+        "type": "polygon",
+        "ref": "geo/hardfence.json",
+        "action": "disarm"
+      }
+    },
+    "link_loss": {
+      "heartbeat_timeout_ms": 5000,
+      "action_on_loss": "autonomous_fts"
+    },
+    "disarmed_fall_containment": {
+      "required": true,
+      "verified": true,
+      "note": "launch field edge modules; landing corridors outside performing volume"
+    }
+  },
+  "provenance": {
+    "created_by": {
+      "tool": "dsx-spec example generator",
+      "version": "0.1"
+    }
+  },
+  "extensions_used": [],
+  "extensions_required": []
+}
