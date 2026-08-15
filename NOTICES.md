@@ -9,13 +9,17 @@ git history.
 
 Contact for Code of Conduct issues or inquiries:
 
-- *(unfilled — two named individuals, not a mailing list, before the first
-  external contributor is invited)*
-- *(unfilled)*
+- **Thomas Fleißner** — fleissner@fleitec.com (editor)
+- *(unfilled — a second individual is required before the first external
+  contributor is invited)*
 
-> Deliberately left blank rather than pointed at a generic address. Someone
-> filing a complaint needs to know which human receives it, and one of the two
-> must be reachable if the other is the subject of the complaint.
+> Named individuals rather than a generic address. Someone filing a complaint
+> needs to know which human receives it, and one of the two must be reachable
+> if the other is the subject of the complaint. **Until the second name is
+> filled in, that second property does not hold**: a complaint about the editor
+> currently has no separate recipient. This is recorded here rather than
+> papered over, and it is a precondition for inviting outside contributors, not
+> a formality to be completed later.
 
 ## License Acceptance
 

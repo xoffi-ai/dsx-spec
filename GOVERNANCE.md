@@ -2,8 +2,15 @@
 
 ## 1. Current state — and the pledge that goes with it
 
-DSX is currently edited by **Xoffi**, published in the `xoffi-ai` GitHub
+DSX is currently edited by **Thomas Fleißner**, trading as **FLEITEC**
+(sole proprietorship, Austria), and published in the `xoffi-ai` GitHub
 organisation. That is a starting condition, not a destination.
+
+The editor is named as a natural person on purpose. "Xoffi" is a brand, and a
+brand cannot make the pledge below — the promise to hand over the
+specification, the schemas and any marks is only worth something if it is
+traceable to someone who can be held to it. It also means the pledge survives
+a change of brand and does not survive a change of mind unnoticed.
 
 > **Stewardship pledge.** Once **three independent implementers** (organisations
 > other than the initial editor) have shipped a DSX reader or writer, the
