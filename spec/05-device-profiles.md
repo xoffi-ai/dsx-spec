@@ -77,6 +77,11 @@ is not in the show.
       "trajectory_rate_hz": { "required": 30 },
       "light_rate_hz": { "required": 30 },
       "channels": ["R", "G", "B"],
+      "capabilities": ["dsx.core", "dsx.light.rgb"] },
+    { "name": "rgb-4hz",
+      "trajectory_rate_hz": { "required": 4 },
+      "light_rate_hz": { "required": 4 },
+      "channels": ["R", "G", "B"],
       "capabilities": ["dsx.core", "dsx.light.rgb"] }
   ],
 

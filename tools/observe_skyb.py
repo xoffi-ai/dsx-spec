@@ -27,11 +27,20 @@ def walk(path):
         features = data[p]; p += 1
         out.append(f"    feature byte = 0x{features:02x} (bits: {features:08b})")
         if features & 0x01:
-            crc = struct.unpack_from('<I', data, p)[0]; p += 4
-            # verify over remainder
+            # The meaning of this field is NOT resolved (Appendix B.1.4, A27).
+            # CRC-32 over the remainder is one of the hypotheses that was
+            # tested and did NOT hold. It is printed as a hypothesis, never as
+            # a verdict: this tool must not imply that SKYB integrity has been
+            # checked, because the spec forbids exactly that claim.
+            field = struct.unpack_from('<I', data, p)[0]; p += 4
             calc = binascii.crc32(data[p:]) & 0xFFFFFFFF
-            ok = "MATCH" if calc == crc else f"MISMATCH (calc {calc:08x})"
-            out.append(f"    crc32 stored = {crc:08x}  over-remainder {ok}")
+            note = ("hypothesis crc32-over-remainder: coincides (NOT a "
+                    "verification -- this hypothesis is recorded as falsified "
+                    "in B.1.4)"
+                    if calc == field else
+                    "hypothesis crc32-over-remainder: differs")
+            out.append(f"    unidentified 4-byte field @6 = {field:08x} "
+                       f"({note}; meaning unresolved, see spec/B B.1.4)")
 
     out.append(f"    body starts at offset {p}")
     while p < n:

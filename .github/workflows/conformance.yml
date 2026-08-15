@@ -1,0 +1,24 @@
+name: conformance
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # cryptography is not optional in CI: a skipped signature check
+      # would otherwise report a green run that verified nothing.
+      - run: pip install jsonschema referencing cryptography
+      - run: python3 conformance/run_schema_checks.py
+      - run: python3 conformance/check_rotation.py
+      - run: python3 conformance/check_archive.py
+      - name: examples are sealed with the committed content hash
+        run: |
+          python3 tools/dsx_seal.py verify examples/rotation-l2
+          python3 tools/dsx_seal.py verify examples/continuous-l2

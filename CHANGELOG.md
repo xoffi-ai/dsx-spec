@@ -2,20 +2,64 @@
 
 ## Unreleased
 
+### Changed (fresh-eyes review round)
+- **Licensing corrected before publication.** The spec licence no longer names
+  OWFa 1.0 — an executory agreement that binds no one when merely listed in a
+  repository. Specification text is now dual-licensed **CC BY 4.0 OR
+  Apache-2.0**, with the patent grant supplied by Apache-2.0 §3, and
+  CONTRIBUTING states the inbound = outbound convention explicitly.
+  `LICENSE-SPEC.md` records why the earlier wording was wrong.
+- **"Clean room" renamed to what it actually is.** The provenance notice is
+  now titled *Separation of Roles*: GPL source was read to establish
+  observable facts, so the process is a one-way wall (spec yes, implementation
+  no), not a clean room. The notice says so itself.
+- **§10.9 conformance table completed.** The cyclic row previously left
+  R10.2, R10.13 and R10.14 neither applied nor discharged; all three apply to
+  cyclic operation and the table now says why.
+- **Schema enforces R10.10 / R10.11.** Rotation shows must declare
+  `ground_service.bays` and `throughput_per_min`; a `swap` turnaround policy
+  must declare `battery_pool`. Negative tests prove both rejections, and a
+  `charge_in_place` control proves the requirement is scoped, not blanket.
+- **Appendix B records full SHA-256 digests** of the thirteen observed
+  fixtures (previously truncated to 16 hex), plus the source repository URL —
+  the stated purpose is reproducibility, and a truncated hash cannot pin exact
+  bytes.
+
 ### Added
 - **Section 10 — waves, sorties and rotation operation.** Three-level model
   (role / airframe / sortie) enabling shows longer than one battery charge.
-  Rules R10.1–R10.14: role coverage, module exclusivity, turnaround closure,
+  Rules R10.1–R10.14 and R10.25: role coverage, module exclusivity, turnaround closure,
   ground-service capacity, battery-pool closure, per-sortie energy closure,
   cross-wave separation, corridor intersection, no-silent-degradation.
+- **Section 10.8 — unbounded rotation and continuous operation.** Wave groups
+  and waves per group are explicitly unbounded (R10.15); an endless show is
+  declared generatively via `wave_cycle` instead of enumerating infinitely many
+  waves, with a normative derivation rule (R10.16). Because an indefinite
+  timeline cannot be simulated, capacity validation becomes inductive:
+  closed-form steady-state inequalities for airframes, batteries, bays and crew
+  throughput (R10.17–R10.19), consumable closure for actuators that do not
+  recirculate (R10.20), loop-seam continuity and declared handover masking
+  (R10.21–R10.22), cyclic termination maps (R10.23) and a mandatory drain plan
+  (R10.24) — because an endless show still has to end.
 - `conformance/check_rotation.py` — semantic validator for the rules JSON
-  Schema cannot express. Nine negative tests prove each rule bites.
-- `examples/rotation-l2/` — 42-minute show flown by 6 aircraft with 7.5
-  minutes of endurance each; demonstrates why two wave groups are
+  Schema cannot express, for both enumerated and cyclic rotation. Negative tests
+  in `run_schema_checks.py` and `check_rotation.py` prove the rules bite — the
+  suites print their own counts, which is why none are quoted here; the
+  normative wave derivation (R10.16) is pinned by a test so two implementations
+  cannot diverge. 20 of the 25 rules of §10 have an executable check —
+  R10.2, R10.7, R10.8, R10.13 and R10.25 do not yet, and are listed as such in
+  `spec/A-open-questions.md`.
+- `examples/rotation-l2/` — 42-minute show flown by 6 aircraft with a declared
+  620 s energy budget and 450 s of use per sortie; demonstrates why two wave groups are
   insufficient at a 420 s turnaround and three are required.
+- `examples/continuous-l2/` — an *indefinite* show: 18 aircraft in 3 groups
+  sustaining 6 roles without interruption for as long as the permit allows.
+  Nothing in the file grows with running time. Its battery pool is sized by
+  R10.18 at a minimum of 46 (the file declares 48), not by the 6 aircraft in
+  the air — the factor that a single-changeover plan gets wrong.
 - **Appendix B — observed third-party formats.** SKYB container framing,
   block typing and event records verified against 13 published fixtures with
-  recorded SHA-256. Written under the clean-room boundary of
+  recorded SHA-256. Written under the separation-of-roles rule of
   `NOTICE-PROVENANCE.md` §4.
 
 ### Fixed
@@ -23,6 +67,9 @@
   Now resolved from a local registry: the toolchain validates **air-gapped**,
   as the operating rules DSX targets require. Fixing this immediately exposed
   an incomplete `termination` block that had been passing unchecked.
+- Six schema tests for the continuous example were passing for the wrong
+  reason (an invalid `time` block in the fixture masked the property under
+  test). Each negative test now fails on the rule it names.
 
 
 ## v0.1-draft — 2026-08-15

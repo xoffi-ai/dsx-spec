@@ -2,7 +2,7 @@
 
 ## 1. Current state — and the pledge that goes with it
 
-DSX is currently edited by **Xoffi**, published in the `xoffi` GitHub
+DSX is currently edited by **Xoffi**, published in the `xoffi-ai` GitHub
 organisation. That is a starting condition, not a destination.
 
 > **Stewardship pledge.** Once **three independent implementers** (organisations
@@ -12,6 +12,11 @@ organisation. That is a starting condition, not a destination.
 > association, or an established standards body (candidates: ASTM F38 /
 > committee item WK95240, the Shenzhen UAV Industry Association, or a purpose-
 > formed consortium). The reference implementation may remain with its authors.
+>
+> **No contact or commitment with any of these bodies exists yet.** They are
+> listed as candidates the editor considers appropriate, not as parties who
+> have agreed to anything. Naming them is a statement of intent; reading it as
+> endorsement would be a misreading this paragraph exists to prevent.
 
 The reason is simple and worth stating plainly: **a format owned by one vendor
 is not adopted by that vendor's competitors.** glTF succeeded at Khronos.

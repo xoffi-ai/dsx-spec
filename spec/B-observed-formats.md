@@ -7,7 +7,7 @@ never read another project's source code — see `NOTICE-PROVENANCE.md` §4.
 Nothing here is derived from confidential material. Every statement below is
 reproducible by anyone who downloads the same files and reads the bytes.
 
-> **Clean-room boundary.** This appendix is *specification*. Contributors who
+> **Separation of roles.** This appendix is *specification*. Contributors who
 > have read the source code of the corresponding GPL-licensed implementation
 > may write and review this text, but MUST NOT write the DSX reference
 > importer/exporter for the same format. The implementation is written from
@@ -19,25 +19,26 @@ reproducible by anyone who downloads the same files and reads the bytes.
 
 ### B.1.1 Observation basis
 
-Thirteen fixture files published in the `libskybrush` repository under
-`test/fixtures/`. Retrieved 15 Aug 2026. SHA-256 recorded so the observations
+Thirteen fixture files published in the `libskybrush` repository
+(<https://github.com/skybrush-io/libskybrush>) under `test/fixtures/`.
+Retrieved 15 Aug 2026. SHA-256 recorded so the observations
 can be reproduced against the exact bytes examined:
 
-| File | Bytes | SHA-256 (first 16 hex) |
+| File | Bytes | SHA-256 |
 |---|---|---|
-| `forward_left_back.skyb` | 155 | `ce176ded67f2fdb0` |
-| `forward_left_back_no_lights.skyb` | 149 | `0cdc0623f3008352` |
-| `forward_left_back_truncated.skyb` | 64 | `e16b4de73e83470a` |
-| `forward_left_back_v2.skyb` | 160 | `f1f77fc0c9d392bf` |
-| `forward_left_back_v2_invalid_chksum.skyb` | 160 | `5a4e133379e40aa3` |
-| `hover_3m.skyb` | 76 | `4fdda79702c27065` |
-| `hover_3m_with_rth_plan.skyb` | 134 | `3a07c766a22355c3` |
-| `light_program_with_wait_until_cmd.skyb` | 169 | `ef7c3a0e3054b386` |
-| `multiple_vertical_landing_segments.skyb` | 155 | `6f581605451e3433` |
-| `pyro_events.skyb` | 87 | `20de3ebce4418a80` |
-| `real_show.skyb` | 10457 | `bc328c3cef9dc449` |
-| `test.skyb` | 110 | `27cb2189d0cf4b92` |
-| `zero_scale.skyb` | 36 | `202722b7c13df380` |
+| `forward_left_back.skyb` | 155 | `ce176ded67f2fdb05c6abd0c7c574077dcffab51cc5db862039618b7bb491c51` |
+| `forward_left_back_no_lights.skyb` | 149 | `0cdc0623f3008352a4dc229e350c255ebfac86331804f5240bd3f46114202775` |
+| `forward_left_back_truncated.skyb` | 64 | `e16b4de73e83470abda29c0541e3491d9ee36a86628a53ef7a8540899f27e49d` |
+| `forward_left_back_v2.skyb` | 160 | `f1f77fc0c9d392bffb89f258871123b19108bda7c8637e2f9d2d318a49e772b0` |
+| `forward_left_back_v2_invalid_chksum.skyb` | 160 | `5a4e133379e40aa3fb0fa32a3b16dd22105a0cd72738c84edc7f3846a5de0b8a` |
+| `hover_3m.skyb` | 76 | `4fdda79702c27065a15fd50110a7d95c954aab2bad3c7bfec159f0c95f8a243d` |
+| `hover_3m_with_rth_plan.skyb` | 134 | `3a07c766a22355c3e5ebaa1b3dbc0d052615c92fbc0e2896a6df44e3ec45b3a1` |
+| `light_program_with_wait_until_cmd.skyb` | 169 | `ef7c3a0e3054b38679486033ae9e5c7f74df3f9bccb06626520f82a1bf0820c7` |
+| `multiple_vertical_landing_segments.skyb` | 155 | `6f581605451e343351c3175acadf5b5cc1262a98df7afc7039a790cb35ee066e` |
+| `pyro_events.skyb` | 87 | `20de3ebce4418a80dd63ed60b8b323279cee566c7e0f927968fb4c6537a4c32a` |
+| `real_show.skyb` | 10457 | `bc328c3cef9dc449f47790ed33920649fa3648e6d4623f55fb277f4eda42cda7` |
+| `test.skyb` | 110 | `27cb2189d0cf4b920270f6a0478f11039878cbeb988536419be6dc45a6e7d285` |
+| `zero_scale.skyb` | 36 | `202722b7c13df3803a9f208e229e998b0f06348a8f7a3657ff069c11c82f557f` |
 
 ### B.1.2 Container framing — **verified**
 
@@ -165,5 +166,5 @@ alone.
 | VVIZ | publicly specified by its vendors; no reverse observation required |
 | DJI WPML | publicly specified by the vendor; no reverse observation required |
 
-Contributions to this appendix are welcome and are governed by the clean-room
+Contributions to this appendix are welcome and are governed by the separation-of-roles
 boundary stated at the top.

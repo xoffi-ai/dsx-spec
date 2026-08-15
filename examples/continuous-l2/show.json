@@ -1,0 +1,677 @@
+{
+  "dsx": "0.1",
+  "profile": "L2",
+  "show": {
+    "title": "Continuous rotation reference show",
+    "duration_ms": null,
+    "audio": {
+      "file": "audio/loop.mp3",
+      "media_type": "audio/mpeg",
+      "offset_ms": 0,
+      "sync": "gnss"
+    }
+  },
+  "frame": {
+    "type": "ENU",
+    "handedness": "right",
+    "bearing_deg": 0.0,
+    "origin": {
+      "lat": 22.5431,
+      "lon": 114.0579,
+      "alt_m": 12.4,
+      "alt_ref": "AMSL",
+      "geoid": "EGM2008"
+    }
+  },
+  "time": {
+    "base": "ms",
+    "start": {
+      "mode": "gnss_tow"
+    },
+    "time_source": {
+      "primary": "gnss",
+      "holdover": {
+        "source": "rtc_disciplined",
+        "max_drift_ms_per_min": null,
+        "on_exceed": "hold"
+      },
+      "fallback": "countdown"
+    }
+  },
+  "fleet": [
+    {
+      "id": "grp-main",
+      "count": 18,
+      "device_profile": "devices/example-aircraft.dsxp",
+      "device_type_id": "6b1f2a54-9c33-4e17-9a0b-2f7d5c8e4a10",
+      "device_mode": "rgb-30hz",
+      "declared_envelope": {
+        "peak_speed_xy_ms": 6.5,
+        "min_separation_m": 2.5,
+        "uses_channels": [
+          "R",
+          "G",
+          "B"
+        ]
+      }
+    }
+  ],
+  "roles": [
+    {
+      "id": "r0001",
+      "trajectory": "traj/r0001.json",
+      "light": "light/r0001.json",
+      "loop": {
+        "period_ms": 420000,
+        "continuity": "c1",
+        "tolerance": {
+          "position_m": 0.05,
+          "velocity_ms": 0.1
+        },
+        "colour_continuous": true
+      }
+    },
+    {
+      "id": "r0002",
+      "trajectory": "traj/r0002.json",
+      "light": "light/r0002.json",
+      "loop": {
+        "period_ms": 420000,
+        "continuity": "c1",
+        "tolerance": {
+          "position_m": 0.05,
+          "velocity_ms": 0.1
+        },
+        "colour_continuous": true
+      }
+    },
+    {
+      "id": "r0003",
+      "trajectory": "traj/r0003.json",
+      "light": "light/r0003.json",
+      "loop": {
+        "period_ms": 420000,
+        "continuity": "c1",
+        "tolerance": {
+          "position_m": 0.05,
+          "velocity_ms": 0.1
+        },
+        "colour_continuous": true
+      }
+    },
+    {
+      "id": "r0004",
+      "trajectory": "traj/r0004.json",
+      "light": "light/r0004.json",
+      "loop": {
+        "period_ms": 420000,
+        "continuity": "c1",
+        "tolerance": {
+          "position_m": 0.05,
+          "velocity_ms": 0.1
+        },
+        "colour_continuous": true
+      }
+    },
+    {
+      "id": "r0005",
+      "trajectory": "traj/r0005.json",
+      "light": "light/r0005.json",
+      "loop": {
+        "period_ms": 420000,
+        "continuity": "c1",
+        "tolerance": {
+          "position_m": 0.05,
+          "velocity_ms": 0.1
+        },
+        "colour_continuous": true
+      }
+    },
+    {
+      "id": "r0006",
+      "trajectory": "traj/r0006.json",
+      "light": "light/r0006.json",
+      "loop": {
+        "period_ms": 420000,
+        "continuity": "c1",
+        "tolerance": {
+          "position_m": 0.05,
+          "velocity_ms": 0.1
+        },
+        "colour_continuous": true
+      }
+    }
+  ],
+  "wave_groups": [
+    {
+      "id": "A",
+      "modules": [
+        "M1"
+      ]
+    },
+    {
+      "id": "B",
+      "modules": [
+        "M2"
+      ]
+    },
+    {
+      "id": "C",
+      "modules": [
+        "M3"
+      ]
+    }
+  ],
+  "wave_cycle": {
+    "period_ms": 420000,
+    "order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "first_takeoff_ms": 0,
+    "repeat": "indefinite",
+    "template": {
+      "flight_ms": 465000,
+      "ingress_ms": 15000,
+      "egress_ms": 30000,
+      "role_binding": "by_slot_index",
+      "energy_use_s": 465.0
+    },
+    "seam": {
+      "loop_period_ms": 420000,
+      "continuity": "c1",
+      "handover_masking": "aligned",
+      "masked_window_ms": [
+        10000,
+        25000
+      ]
+    }
+  },
+  "handovers": [
+    {
+      "id": "h-cycle",
+      "cyclic": true,
+      "phase_ms": [
+        0,
+        45000
+      ],
+      "both_airborne": true,
+      "cross_wave_separation_m": 4.0,
+      "corridors": [
+        "in-cycle",
+        "out-cycle"
+      ],
+      "abort_action": "hold_incoming"
+    }
+  ],
+  "corridors": [
+    {
+      "id": "in-cycle",
+      "cyclic": true,
+      "type": "ingress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "phase_ms": [
+        0,
+        15000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    },
+    {
+      "id": "out-cycle",
+      "cyclic": true,
+      "type": "egress",
+      "polygon": "geo/corridor_edge.json",
+      "alt_band_m": [
+        5.0,
+        30.0
+      ],
+      "phase_ms": [
+        15000,
+        45000
+      ],
+      "must_not_intersect": [
+        "flight_volume:performing"
+      ]
+    }
+  ],
+  "launch_stack": {
+    "modules": [
+      {
+        "id": "M1",
+        "origin_m": [
+          40.0,
+          16.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 3,
+        "rows": 2,
+        "levels": 1,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M2",
+        "origin_m": [
+          48.0,
+          16.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 3,
+        "rows": 2,
+        "levels": 1,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      },
+      {
+        "id": "M3",
+        "origin_m": [
+          56.0,
+          16.0
+        ],
+        "bearing_deg": 0.0,
+        "columns": 3,
+        "rows": 2,
+        "levels": 1,
+        "spacing_m": {
+          "x": 1.2,
+          "y": 1.2,
+          "z": 0.35
+        }
+      }
+    ]
+  },
+  "turnaround": {
+    "policy": "swap",
+    "min_s": 420,
+    "components_s": {
+      "cooldown": 60,
+      "recover": 120,
+      "service": 90,
+      "stage": 150
+    },
+    "ground_service": {
+      "bays": 8,
+      "crew": 6,
+      "throughput_per_min": 30,
+      "battery_pool": {
+        "count": 48,
+        "charge_time_s": 2700
+      }
+    }
+  },
+  "energy": {
+    "model": "declared",
+    "per_sortie": {
+      "budget_s": 640,
+      "reserve_pct": 25,
+      "margin_policy": "reject_on_exceed"
+    }
+  },
+  "open_ended": {
+    "min_ms": 3600000,
+    "max_continuous_ms": 21600000,
+    "limited_by": [
+      "permit",
+      "crew_duty",
+      "battery_cycles"
+    ],
+    "drain": {
+      "trigger": "operator_command",
+      "stop_launching": true,
+      "roles_release": "on_cycle_end",
+      "duration_ms": 465000
+    }
+  },
+  "drones": [
+    {
+      "id": "A-001",
+      "fleet": "grp-main",
+      "group": "A",
+      "slot_index": 0,
+      "serial": "UV-IFO-1000",
+      "home": {
+        "x": 40.0,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "A-002",
+      "fleet": "grp-main",
+      "group": "A",
+      "slot_index": 1,
+      "serial": "UV-IFO-1001",
+      "home": {
+        "x": 41.2,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "A-003",
+      "fleet": "grp-main",
+      "group": "A",
+      "slot_index": 2,
+      "serial": "UV-IFO-1002",
+      "home": {
+        "x": 42.4,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "A-004",
+      "fleet": "grp-main",
+      "group": "A",
+      "slot_index": 3,
+      "serial": "UV-IFO-1003",
+      "home": {
+        "x": 40.0,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "A-005",
+      "fleet": "grp-main",
+      "group": "A",
+      "slot_index": 4,
+      "serial": "UV-IFO-1004",
+      "home": {
+        "x": 41.2,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "A-006",
+      "fleet": "grp-main",
+      "group": "A",
+      "slot_index": 5,
+      "serial": "UV-IFO-1005",
+      "home": {
+        "x": 42.4,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "B-001",
+      "fleet": "grp-main",
+      "group": "B",
+      "slot_index": 0,
+      "serial": "UV-IFO-1100",
+      "home": {
+        "x": 48.0,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "B-002",
+      "fleet": "grp-main",
+      "group": "B",
+      "slot_index": 1,
+      "serial": "UV-IFO-1101",
+      "home": {
+        "x": 49.2,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "B-003",
+      "fleet": "grp-main",
+      "group": "B",
+      "slot_index": 2,
+      "serial": "UV-IFO-1102",
+      "home": {
+        "x": 50.4,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "B-004",
+      "fleet": "grp-main",
+      "group": "B",
+      "slot_index": 3,
+      "serial": "UV-IFO-1103",
+      "home": {
+        "x": 48.0,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "B-005",
+      "fleet": "grp-main",
+      "group": "B",
+      "slot_index": 4,
+      "serial": "UV-IFO-1104",
+      "home": {
+        "x": 49.2,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "B-006",
+      "fleet": "grp-main",
+      "group": "B",
+      "slot_index": 5,
+      "serial": "UV-IFO-1105",
+      "home": {
+        "x": 50.4,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "C-001",
+      "fleet": "grp-main",
+      "group": "C",
+      "slot_index": 0,
+      "serial": "UV-IFO-1200",
+      "home": {
+        "x": 56.0,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "C-002",
+      "fleet": "grp-main",
+      "group": "C",
+      "slot_index": 1,
+      "serial": "UV-IFO-1201",
+      "home": {
+        "x": 57.2,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "C-003",
+      "fleet": "grp-main",
+      "group": "C",
+      "slot_index": 2,
+      "serial": "UV-IFO-1202",
+      "home": {
+        "x": 58.4,
+        "y": 16.0,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "C-004",
+      "fleet": "grp-main",
+      "group": "C",
+      "slot_index": 3,
+      "serial": "UV-IFO-1203",
+      "home": {
+        "x": 56.0,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "C-005",
+      "fleet": "grp-main",
+      "group": "C",
+      "slot_index": 4,
+      "serial": "UV-IFO-1204",
+      "home": {
+        "x": 57.2,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    },
+    {
+      "id": "C-006",
+      "fleet": "grp-main",
+      "group": "C",
+      "slot_index": 5,
+      "serial": "UV-IFO-1205",
+      "home": {
+        "x": 58.4,
+        "y": 17.2,
+        "z": 0.0,
+        "heading_deg": 0.0
+      },
+      "battery_policy": "swap"
+    }
+  ],
+  "safety": {
+    "min_separation_m": 2.5,
+    "geofence": "geo/fence.json"
+  },
+  "termination": {
+    "channel": "independent",
+    "escalation": [
+      "hold",
+      "coordinated_rth",
+      "land_in_place",
+      "disarm"
+    ],
+    "coordinated_rth": {
+      "precomputed": true,
+      "recompute_interval_ms": 15000,
+      "cancellable": false
+    },
+    "rth_availability": {
+      "default_interval_ms": 15000,
+      "adaptive": true,
+      "cyclic": true,
+      "period_ms": 420000,
+      "windows": [
+        {
+          "from_ms": 0,
+          "to_ms": 45000,
+          "feasible": false,
+          "reason": "handover_both_airborne",
+          "available_escalation": [
+            "hold",
+            "land_in_place",
+            "disarm"
+          ]
+        },
+        {
+          "from_ms": 45000,
+          "to_ms": 420000,
+          "interval_ms": 15000,
+          "feasible": true
+        }
+      ]
+    },
+    "geofence": {
+      "soft": {
+        "type": "bubble",
+        "radius_m": 4.0,
+        "action": "auto_land",
+        "timeout_ms": 1500
+      },
+      "hard": {
+        "type": "polygon",
+        "ref": "geo/hardfence.json",
+        "action": "disarm"
+      }
+    },
+    "link_loss": {
+      "heartbeat_timeout_ms": 5000,
+      "action_on_loss": "autonomous_fts"
+    },
+    "disarmed_fall_containment": {
+      "required": true,
+      "verified": true
+    }
+  },
+  "provenance": {
+    "created_by": {
+      "tool": "dsx-spec example generator",
+      "version": "0.1"
+    },
+    "validated_by": {
+      "tool": "conformance/check_rotation.py",
+      "version": "0.1",
+      "result": "pass",
+      "scope": "manifest-level rules of section 10 only; trajectory and light files are not resolved, and loop continuity is checked as a declaration, not against the sampler (A26)"
+    },
+    "content_hash": "sha256:d168073eeb985e77673fe6a0ddab3defd96fc52fe55fa97f52574877e9c65a03",
+    "signature": {
+      "alg": "ed25519",
+      "key_id": "dsx-demo-key-not-for-production",
+      "file": "signature/show.sig",
+      "public_key": "signature/public.key"
+    }
+  },
+  "extensions_used": [],
+  "extensions_required": []
+}

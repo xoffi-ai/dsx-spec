@@ -279,27 +279,278 @@ one another and the vertical index is part of both departure and return order.
 ```
 
 A sortie's `slot` is `{ module, column, row, level }`. A sortie MAY return to a
-different slot than it departed from; the file states both, and a validator
-checks that no slot is occupied by two airframes at the same time across the
-whole show — a constraint that does not exist in single-launch formats because
-there, occupancy is trivially static.
+different slot than it departed from; the file states both.
+
+**Rule R10.14 — Slot occupancy is exclusive in time, not for the whole show.**
+An airframe occupies its departure slot until `takeoff_ms`, and its
+`return_slot` (defaulting to `slot`) from `land_ms` until it next departs. Two
+airframes MUST NOT occupy the same slot over overlapping intervals. Reuse of a
+slot by a *different* airframe once the previous occupant has left is explicitly
+permitted and is how a launch field smaller than the fleet is flown — a
+validator that forbids it has misread this rule and has forbidden rotation
+itself. This constraint does not exist in single-launch formats, where
+occupancy is trivially static.
 
 §7's requirement that a disarmed aircraft's fall be contained applies during
 stacked departure and return as well, where an aircraft may be directly above
 another.
 
-## 10.8 Conformance
+## 10.8 Unbounded rotation and continuous operation
+
+§10.1–§10.7 describe a show that rotates a *finite* number of times. The
+limiting case is a show that does not stop: a fleet circulating indefinitely,
+the audience seeing one uninterrupted piece for an entire evening, a festival
+night, or the opening hours of a permanent installation.
+
+Two things are required for this, and DSX provides both.
+
+### 10.8.1 No upper bound
+
+**Rule R10.15 — The number of wave groups and the number of waves per group
+are unbounded.** A conforming file MAY declare any number of wave groups, and
+any number of waves per group. A reader, validator or exporter MUST NOT impose
+a fixed maximum, and MUST NOT assume two groups, or three, or any other count.
+
+This is a statement about implementations, not about files. Every observed
+format hard-codes exactly one launch and one landing; the natural next mistake
+is to hard-code two alternating groups, because two is what a single changeover
+looks like. Two is almost never the right number. The group count follows from
+arithmetic:
+
+```
+G_min  =  ceil( (flight_ms + turnaround_ms) / period_ms )
+```
+
+where `period_ms` is the interval between successive launches — for gapless
+role coverage, the time one wave actually performs. A group is unavailable from
+its takeoff until it is serviced and ready again; the fleet needs as many
+groups as fit into that unavailability.
+
+With 465 s of flight and 420 s of turnaround at a 420 s period, `G_min` is 3,
+not 2: two groups leave a 30 s hole in the choreography on every cycle. The
+same arithmetic with a faster turnaround yields 2, and with hot-swap crews and
+long endurance it can yield 2 again at a much longer period. There is no
+correct constant. A validator MUST compute `G_min` and MUST reject a file that
+declares fewer groups.
+
+### 10.8.2 Cyclic declaration
+
+An indefinite show cannot enumerate its waves, its sorties or its assignments —
+there are infinitely many. It declares the *rule* that generates them instead.
+
+```jsonc
+"wave_cycle": {
+  "period_ms": 420000,
+  "order": ["A", "B", "C"],          // round-robin launch order
+  "first_takeoff_ms": 0,
+  "repeat": "indefinite",            // or an integer number of launches
+  "template": {
+    "flight_ms":  465000,            // takeoff -> landed
+    "ingress_ms":  15000,            // takeoff -> takes over its role
+    "egress_ms":   30000,            // leaves its role -> landed
+    "role_binding": "by_slot_index"  // slot k of the performing wave serves role k
+  },
+  "seam": {
+    "loop_period_ms": 1260000,       // choreography period: 3 x period_ms
+    "continuity": "c1",
+    "handover_masking": "aligned",   // aligned | drifting
+                                     // window below is phase within period_ms
+    "masked_window_ms": [10000, 25000]
+  }
+}
+```
+
+`wave_cycle` and the explicit `waves` array are mutually exclusive. In cyclic
+mode the wave, sortie and assignment enumerations are *derived*, not written:
+
+```
+launch index k = 0, 1, 2, …
+  group     = order[k mod len(order)]
+  wave id   = "<group>#<n>"          n = number of previous launches of that group, 1-based
+  takeoff   = first_takeoff_ms + k * period_ms
+  performs  = [takeoff + ingress_ms, takeoff + flight_ms - egress_ms]
+  role r_i  = served by the airframe at slot index i of the performing wave
+```
+
+**Rule R10.16 — Derivation is normative.** The generation rule above is part of
+the specification, not an implementation detail. Two conforming tools MUST
+derive identical wave identifiers, takeoff times and role assignments from the
+same `wave_cycle`. Generated identifiers are stable and may be referenced from
+elsewhere in the file, from logs and from approval documents.
+
+`role_binding: "by_slot_index"` is what makes this scale: a 5000-aircraft
+continuous show declares three groups, one template and one role list. Nothing
+grows with the running time, and nothing grows with the number of cycles.
+
+### 10.8.3 Steady state replaces simulation
+
+A finite rotation show is validated by simulating its timeline (§10.6). An
+indefinite show has no timeline to simulate. Its validation is inductive: prove
+that **one** cycle is internally valid, and that the state at the end of a cycle
+is at least as good as the state at its start. If both hold, every cycle holds.
+
+This turns the capacity rules into closed-form inequalities. With a launch rate
+
+```
+λ = aircraft_per_wave / period_s      [aircraft per second]
+```
+
+the steady-state requirements are:
+
+| Resource | Requirement | Rule |
+|---|---|---|
+| Airframes | `count >= λ · (flight_s + turnaround_s)` | R10.17 |
+| Batteries (`policy: swap`) | `pool.count >= λ · (flight_s + charge_time_s)` | R10.18 |
+| Service bays | `bays >= λ · service_s` | R10.19 |
+| Crew throughput | `throughput_per_min >= λ · 60` | R10.19 |
+
+**Rule R10.17 — Airframe closure.** The declared airframe population MUST
+satisfy the inequality above. Aircraft that are flying or being serviced are not
+available to launch.
+
+**Rule R10.18 — Battery closure in steady state.** Where `turnaround.policy` is
+`swap`, the battery pool MUST satisfy the inequality above. A battery is out of
+circulation for its flight *and* its entire charge time; a pool sized for one
+changeover is not a pool sized for continuous operation, and the difference is
+usually a factor of several. A validator MUST compute this and MUST reject a
+file that cannot sustain its own cycle. **A continuous show fails at the
+charger, not in the air.**
+
+**Rule R10.19 — Ground capacity in steady state.** Bays and crew throughput
+MUST satisfy the inequalities above. Peak simultaneous service in cyclic mode is
+a steady-state quantity, not a one-off event.
+
+**Rule R10.20 — Consumable closure.** Any actuator (§6) with a finite
+`trigger.shots` that is fired in a cyclic show MUST declare a reload in
+`turnaround.components_s` and a consumable pool that closes exactly like the
+battery pool. Batteries recirculate; pyrotechnic charges, confetti loads and
+recovery devices do not. An aircraft that returns to the air with an empty
+launcher will fly the choreography and produce no effect, and nothing in any
+existing format makes that visible before the show. In DSX the file states it or
+is rejected.
+
+### 10.8.4 The seam
+
+A looping show has a moment where the choreography returns to its beginning.
+That moment is visible to the audience on every cycle, which is more scrutiny
+than any other instant of the show receives.
+
+**Rule R10.21 — Loop continuity.** Where a role's trajectory loops, position
+and velocity at the end of the loop period MUST match those at its start to
+within the declared tolerance (`continuity: "c1"`). A file whose roles jump at
+the seam MUST be rejected. Colour SHOULD be continuous across the seam as well;
+where it is not, the discontinuity MUST be declared, because an intentional
+blackout at the seam and an accidental colour jump are indistinguishable to a
+validator but not to an audience.
+
+**Rule R10.22 — Handover masking is declared, not accidental.** The
+choreography's loop period and the wave period interact. Where
+`loop_period_ms` is an integer multiple of `period_ms` (including equal), the
+handover is **aligned**: every changeover falls on the same instant of the
+artwork, on every cycle, forever. Such a file MUST declare
+`handover_masking: "aligned"` and a `masked_window_ms` — the passage in which
+the changeover is artistically intended, typically a dark or sparse bar written
+to hide it.
+
+`masked_window_ms` is expressed as a phase **within one wave period**, not
+within the loop period. This matters: an aligned loop of three wave periods
+contains three changeovers, at phases `ingress_ms`, `ingress_ms + period_ms`
+and `ingress_ms + 2 × period_ms`. All of them land on the same phase of the
+wave period and therefore on the same masked window, which is precisely why a
+single declared window suffices. Expressing the window in loop time would
+describe only the first of them and silently leave the rest unmasked.
+
+A validator MUST reject a file in which the role transfer at
+`ingress_ms mod period_ms` falls outside the declared window, and MUST reject
+`handover_masking: "aligned"` where `loop_period_ms` is not a multiple of
+`period_ms` — that combination is a declaration the geometry does not support.
+
+Where the two periods are unrelated, the handover is **drifting**: the
+changeover migrates through the piece and MUST therefore be flyable, and
+acceptable to watch, at every phase. Both are legitimate; leaving it undeclared
+is not, because an aligned handover in a bright, dense passage is the one the
+audience sees on every single cycle and the designer never tested.
+
+**Rule R10.23 — Termination maps are cyclic too.** In cyclic mode the RTH
+feasibility map (§7) and the handover windows (R10.7) are declared over **one**
+period and apply modulo that period. A validator MUST verify that the map covers
+the full period with no gap. An indefinite show without a defined abort at every
+phase of its cycle is not conformant.
+
+### 10.8.5 An endless show still has to end
+
+`repeat: "indefinite"` describes the choreography, not the operation. Every real
+continuous show ends: an approval expires, a crew reaches its duty limit,
+weather moves in, the venue closes.
+
+```jsonc
+"open_ended": {
+  "min_ms": 3600000,               // planned minimum running time
+  "max_continuous_ms": 21600000,   // hard stop: permit, duty time, wear
+  "limited_by": ["permit", "crew_duty", "battery_cycles"],
+  "drain": {
+    "trigger": "operator_command",
+    "stop_launching": true,
+    "roles_release": "on_cycle_end",
+    "duration_ms": 465000
+  }
+}
+```
+
+**Rule R10.24 — A drain plan is mandatory.** Where `show.duration_ms` is `null`
+and `open_ended` is present, the file MUST declare `max_continuous_ms` and a
+`drain` plan describing how the show comes to a planned end: launching stops,
+airborne waves complete their current assignment, roles are released in a
+declared order, the fleet lands. Draining is not terminating (§7): it is the
+normal, unhurried ending of a show that had no fixed length. A file that can
+start indefinitely but cannot stop deliberately is not conformant.
+
+### 10.8.6 Field summary
+
+Everything §10.8 adds, in one place, so an implementer reading only the
+specification can write a conforming cyclic file:
+
+| Member | Where | Meaning |
+|---|---|---|
+| `wave_cycle` | top level | generative wave declaration; excludes `waves` |
+| `wave_cycle.period_ms` | | interval between successive launches |
+| `wave_cycle.order` | | round-robin launch order of groups; unbounded (R10.15) |
+| `wave_cycle.first_takeoff_ms` | | phase of the first launch |
+| `wave_cycle.repeat` | | `"indefinite"` or an integer launch count |
+| `wave_cycle.template` | | `flight_ms`, `ingress_ms`, `egress_ms`, `role_binding`, `energy_use_s` — one sortie, applied to every derived wave |
+| `wave_cycle.seam` | | `loop_period_ms`, `continuity`, `handover_masking`, `masked_window_ms` (R10.21) |
+| `roles[].loop` | role | `period_ms`, `continuity`, `tolerance`, `colour_continuous` (R10.21) |
+| `drones[].group`, `drones[].slot_index` | airframe | binding under `role_binding: "by_slot_index"` (R10.16) |
+| `handovers[].cyclic`, `.phase_ms` | handover | cycle-relative template instead of `from_wave`/`to_wave`/`window_ms` |
+| `corridors[].cyclic`, `.phase_ms`, `.group` | corridor | cycle-relative template instead of `wave`/`active_ms` |
+| `turnaround.ground_service.consumable_pools[]` | ground | `actuator_class`, `count`, `reload_time_s`, `replenished` (R10.20) |
+| `termination.rth_availability.cyclic`, `.period_ms` | termination | the map repeats every period and MUST cover it (R10.23) |
+| `open_ended` | top level | `min_ms`, `max_continuous_ms`, `limited_by[]`, `drain{}` (R10.24) |
+| `show.duration_ms: null` | show | REQUIRED with `repeat: "indefinite"`, forbidden otherwise |
+
+In cyclic mode `handovers` and `corridors` carry **one** entry each per
+recurring pattern, expressed as a phase within `period_ms` — not one entry per
+occurrence. A file that enumerated them per occurrence would grow without bound
+and defeat the purpose of §10.8.
+
+## 10.9 Conformance
 
 Rotation operation is an **L2 (Production)** feature.
 
 | Level | Requirement |
 |---|---|
-| L0 / L1 | `wave_groups`, `waves`, `handovers`, `corridors`, `assignments`, `turnaround` MUST be absent; each airframe has at most one sortie |
-| L2 | Where more than one wave is declared, ALL of R10.1 – R10.13 apply |
+| L0 / L1 | `wave_groups`, `waves`, `wave_cycle`, `handovers`, `corridors`, `assignments`, `turnaround`, `open_ended` MUST be absent; each airframe has at most one sortie |
+| L2, explicit waves | ALL of R10.1 – R10.14 apply |
+| L2, cyclic (`wave_cycle`) | R10.2, R10.4, R10.6 – R10.8, R10.13, R10.14 and R10.15 – R10.24 apply; the enumerated rules R10.1, R10.3, R10.5, R10.9 – R10.12 are discharged by their steady-state equivalents. R10.2 applies because the template owns ingress/egress exactly as a sortie does; R10.13 applies because endurance is still declared per airframe, never on the device profile; R10.14 applies because derived sorties occupy slots over intervals across all cycles |
 
-**Rule R10.14 — No silent degradation.** A reader that does not implement this
-section MUST treat a multi-wave file as `REJECT` (§5.6). Partially interpreting
-a rotation show — for example by reading only the first wave, or by reading only
-the first sortie of each airframe — produces a file that flies, is missing most
-of its aircraft, and gives no indication that anything is wrong. This is the one
-case in DSX where degrading gracefully is explicitly forbidden.
+`waves` and `wave_cycle` MUST NOT both be present. `wave_cycle` with
+`repeat: "indefinite"` REQUIRES `show.duration_ms: null` and `open_ended`
+(R10.24).
+
+**Rule R10.25 — No silent degradation.** A reader that does not implement this
+section MUST treat a multi-wave or cyclic file as `REJECT` (§5.6). Partially
+interpreting a rotation show — by reading only the first wave, only the first
+sortie of each airframe, or by treating a `wave_cycle` as a single launch —
+produces a file that flies, is missing most of its aircraft, and gives no
+indication that anything is wrong. This is the one case in DSX where degrading
+gracefully is explicitly forbidden.

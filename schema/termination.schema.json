@@ -1,94 +1,387 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://dsx-format.org/schema/0.1/termination.schema.json",
+  "$id": "urn:dsx:schema:0.1:termination",
   "title": "DSX Termination object",
   "description": "v0.1-draft. Playback-independent. MUST be evaluable onboard without a ground link.",
   "type": "object",
-  "required": ["channel", "escalation", "geofence", "link_loss"],
+  "required": [
+    "channel",
+    "escalation",
+    "geofence",
+    "link_loss"
+  ],
   "properties": {
-    "channel": { "const": "independent" },
+    "channel": {
+      "const": "independent"
+    },
     "escalation": {
       "type": "array",
-      "items": { "enum": ["hold", "coordinated_rth", "land_in_place", "disarm"] },
+      "items": {
+        "enum": [
+          "hold",
+          "coordinated_rth",
+          "land_in_place",
+          "disarm"
+        ]
+      },
       "minItems": 1,
       "description": "each rung MUST be triggerable by a single operator action"
     },
     "rth_availability": {
       "type": "object",
       "properties": {
-        "default_interval_ms": { "type": "integer", "default": 15000 },
-        "adaptive": { "type": "boolean" },
+        "default_interval_ms": {
+          "type": "integer",
+          "default": 15000
+        },
+        "adaptive": {
+          "type": "boolean"
+        },
         "windows": {
           "type": "array",
           "description": "feasibility map over the timeline: a collision-free return may not exist during a dense transition",
           "items": {
             "type": "object",
-            "required": ["from_ms", "to_ms", "feasible"],
+            "required": [
+              "from_ms",
+              "to_ms",
+              "feasible"
+            ],
             "properties": {
-              "from_ms": { "type": "integer", "minimum": 0 },
-              "to_ms": { "type": "integer", "minimum": 0 },
-              "feasible": { "type": "boolean" },
-              "interval_ms": { "type": "integer" },
-              "reason": { "type": "string" },
+              "from_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "to_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "feasible": {
+                "type": "boolean"
+              },
+              "interval_ms": {
+                "type": "integer"
+              },
+              "reason": {
+                "type": "string"
+              },
               "available_escalation": {
                 "type": "array",
-                "items": { "enum": ["hold", "coordinated_rth", "land_in_place", "disarm"] }
+                "items": {
+                  "enum": [
+                    "hold",
+                    "coordinated_rth",
+                    "land_in_place",
+                    "disarm"
+                  ]
+                }
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
               }
-            }
+            },
+            "additionalProperties": false
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "cyclic": {
+          "type": "boolean",
+          "description": "for open-ended shows the map repeats; windows are then phases within period_ms, not absolute show time (see spec/10 R10.23)"
+        },
+        "period_ms": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "description": "length of one cycle of the feasibility map; REQUIRED when cyclic is true"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "cyclic": {
+                "const": true
+              }
+            },
+            "required": [
+              "cyclic"
+            ]
+          },
+          "then": {
+            "required": [
+              "period_ms"
+            ]
           }
         }
-      }
+      ]
     },
     "geofence": {
       "type": "object",
-      "required": ["soft", "hard"],
+      "required": [
+        "soft",
+        "hard"
+      ],
       "properties": {
         "soft": {
           "type": "object",
-          "required": ["type", "action"],
+          "required": [
+            "type",
+            "action"
+          ],
           "properties": {
-            "type": { "enum": ["bubble"] },
-            "radius_m": { "type": "number", "exclusiveMinimum": 0 },
-            "action": { "enum": ["auto_land", "hold", "disarm"] },
-            "timeout_ms": { "type": "integer" }
-          }
+            "type": {
+              "enum": [
+                "bubble"
+              ]
+            },
+            "radius_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "action": {
+              "enum": [
+                "auto_land",
+                "hold",
+                "disarm"
+              ]
+            },
+            "timeout_ms": {
+              "type": "integer"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
         },
         "hard": {
           "type": "object",
-          "required": ["type", "action"],
+          "required": [
+            "type",
+            "action"
+          ],
           "properties": {
-            "type": { "enum": ["polygon", "cylinder"] },
-            "ref": { "type": "string" },
-            "action": { "enum": ["disarm", "land_in_place"] }
+            "type": {
+              "enum": [
+                "polygon",
+                "cylinder"
+              ]
+            },
+            "ref": {
+              "type": "string",
+              "x-archive-ref": true
+            },
+            "action": {
+              "enum": [
+                "disarm",
+                "land_in_place"
+              ]
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "link_loss": {
       "type": "object",
-      "required": ["heartbeat_timeout_ms", "action_on_loss"],
+      "required": [
+        "heartbeat_timeout_ms",
+        "action_on_loss"
+      ],
       "properties": {
-        "heartbeat_timeout_ms": { "type": "integer", "exclusiveMinimum": 0 },
-        "action_on_loss": { "enum": ["autonomous_fts", "coordinated_rth", "land_in_place", "continue"] }
-      }
+        "heartbeat_timeout_ms": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "action_on_loss": {
+          "enum": [
+            "autonomous_fts",
+            "coordinated_rth",
+            "land_in_place",
+            "continue"
+          ]
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "fallback_channel": {
       "type": "object",
       "properties": {
-        "required_for_profile": { "enum": ["L1", "L2"] },
-        "independent_hardware": { "type": "boolean" },
-        "auth": { "type": "string" }
-      }
+        "required_for_profile": {
+          "enum": [
+            "L1",
+            "L2"
+          ]
+        },
+        "independent_hardware": {
+          "type": "boolean"
+        },
+        "auth": {
+          "type": "string"
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "disarmed_fall_containment": {
       "type": "object",
-      "required": ["required"],
+      "required": [
+        "required"
+      ],
       "description": "the safety area MUST contain the ballistic trajectory of a disarmed aircraft from every position the show reaches",
       "properties": {
-        "required": { "type": "boolean" },
-        "verified": { "type": "boolean" },
-        "verified_by": { "type": "string" }
+        "required": {
+          "type": "boolean"
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "verified_by": {
+          "type": "string"
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+      "propertyNames": {
+        "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "coordinated_rth": {
+      "type": "object",
+      "description": "Pre-computed, collision-free return branches. Computing them live is not an option: at trigger time a valid plan must already exist.",
+      "required": [
+        "precomputed"
+      ],
+      "properties": {
+        "precomputed": {
+          "type": "boolean",
+          "description": "MUST be true: a return that still has to be solved when the operator presses the button is not a termination path"
+        },
+        "recompute_interval_ms": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "default": 15000
+        },
+        "cancellable": {
+          "type": "boolean",
+          "description": "once committed a coordinated return runs to completion; declaring it cancellable is a per-operator decision that MUST be recorded"
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "escalation": {
+            "contains": {
+              "const": "coordinated_rth"
+            }
+          }
+        },
+        "required": [
+          "escalation"
+        ]
+      },
+      "then": {
+        "required": [
+          "coordinated_rth"
+        ]
       }
     }
-  }
+  ]
 }

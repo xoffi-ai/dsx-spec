@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "transit corridor edge",
+        "note": "outside the performing volume (R10.8)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.05736505,
+              22.54260593
+            ],
+            [
+              114.05765684,
+              22.54260593
+            ],
+            [
+              114.05765684,
+              22.54287542
+            ],
+            [
+              114.05736505,
+              22.54287542
+            ],
+            [
+              114.05736505,
+              22.54260593
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

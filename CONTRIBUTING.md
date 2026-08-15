@@ -27,19 +27,25 @@ contribution. Sections that cannot be defended get corrected, not defended.
 
 1. **Sign off your commits** (`git commit -s`) — Developer Certificate of
    Origin 1.1. No CLA.
-2. **Cite sources for factual claims.** Numbers in this repository — separation
+2. **Inbound = outbound.** A contribution is licensed under the repository's
+   licences. For specification text that is CC BY 4.0 **and** Apache-2.0 —
+   the latter including the patent grant of its §3, which is what makes this
+   specification implementable by industry. If you cannot grant that (e.g.
+   your employer holds relevant patents), say so in the pull request; the
+   contribution will be discussed openly, not silently dropped.
+3. **Cite sources for factual claims.** Numbers in this repository — separation
    distances, wind limits, latencies, altitude thresholds — must be traceable
    to a document, a datasheet, or a described measurement. An unsourced number
    is worse than a missing one. `null` meaning *unknown* is a valid, documented
    state; an invented default is not.
-3. **Clean-room boundary.** If you have read the source code of a GPL-licensed
+4. **Separation of roles.** If you have read the source code of a GPL-licensed
    drone show implementation, you may contribute to the *specification* but not
    to the corresponding Apache-2.0 reference implementation. State which side
    you are on in your pull request. See [`NOTICE-PROVENANCE.md`](NOTICE-PROVENANCE.md).
-4. **No confidential material.** Do not contribute anything covered by an NDA,
+5. **No confidential material.** Do not contribute anything covered by an NDA,
    and do not paste vendor documentation that is not public. Describe the
    observed behaviour instead, and say that the source is not public.
-5. **Safety-relevant changes require a rationale**, not just a diff: what
+6. **Safety-relevant changes require a rationale**, not just a diff: what
    failure does this prevent, and how would a validator check it?
 
 ## Device profiles

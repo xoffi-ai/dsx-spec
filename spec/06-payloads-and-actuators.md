@@ -41,6 +41,7 @@ deploy it, and a validator **MUST** REJECT a file that tries. A gerb is
   "device_type_id": "…UUID…",
   "device_class": "actuator",
   "manufacturer": "…", "model": "…",
+  "revision": { "id": "…", "date": "…" },   // REQUIRED in every .dsxp (§5)
 
   "actuator": {
     "class": "pyro",          // pyro | recovery | dispenser | smoke | flame

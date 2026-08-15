@@ -26,12 +26,42 @@ therefore part of the compiled `.dsb`, not only of the `.dsx` manifest. At
 fleet sizes now normal, per-aircraft manual intervention is not physically
 possible; automatic onboard mitigation is the only mechanism that scales.
 
+### 7.1.1 The `safety` object — the show-wide floor
+
+```jsonc
+"safety": {
+  "min_separation_m": 2.5,
+  "geofence": "geo/fence.json"
+}
+```
+
+`safety` is REQUIRED at **L1 and L2**. `min_separation_m` is the minimum
+permitted centre-to-centre distance between any two aircraft at any instant,
+and it is the single most safety-critical scalar in the file.
+
+It sits at document level, not per fleet, because separation is a property of
+the **airspace**, not of a device type. A show flying two fleets with different
+airframes still has exactly one distance that must not be undercut, and the
+larger of two per-type values is not automatically the correct one for the pair.
+
+Per-type limits stay in the device profile (§5). The relationship is one-way: a
+fleet's `declared_envelope.min_separation_m` **MUST NOT** be smaller than the
+show-wide floor. A fleet may need *more* room than the show demands; it may
+never be allowed less. `conformance/check_rotation.py` enforces this direction.
+
+At L0 the object is optional, because an L0 file makes no safety claim at all —
+it is a position and colour track and nothing more (§9).
+
 ## 7.2 The termination object
 
 ```jsonc
 "termination": {
   "channel": "independent",
   "escalation": ["hold", "coordinated_rth", "land_in_place", "disarm"],
+
+  // naming a rung obliges the file to define it
+  "coordinated_rth": { "precomputed": true, "recompute_interval_ms": 15000,
+                       "cancellable": false },
 
   "rth_availability": {
     "default_interval_ms": 15000,
@@ -59,6 +89,12 @@ possible; automatic onboard mitigation is the only mechanism that scales.
   "disarmed_fall_containment": { "required": true, "verified": false }
 }
 ```
+
+REQUIRED members of `termination`: `channel`, `escalation`, `geofence` and
+`link_loss`. At **L2**, `disarmed_fall_containment` is REQUIRED as well (§7.6),
+and naming a rung in `escalation` obliges the file to define the object that
+configures it — an escalation ladder with an undefined rung is a ladder with a
+missing step.
 
 ## 7.3 RTH availability — a map, not an interval
 
@@ -155,7 +191,7 @@ minimum a file format can contribute.
   "audience_distance_m": 150,
   "rings": [ { "to_m": 10, "type": "isolation" },
              { "to_m": 20, "type": "buffer" } ],
-  "disarmed_fall_containment": "verified"
+  "fall_containment_status": "verified"
 }
 ```
 

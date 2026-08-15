@@ -1,4 +1,13 @@
-# Provenance and Clean-Room Notice
+# Provenance and Separation-of-Roles Notice
+
+> **A note on terminology.** This process is deliberately **not** called a
+> clean room. In a clean room, the people writing the specification have never
+> seen the original code. Section 2 states plainly that GPL-licensed source
+> code *was* read to establish externally observable facts. What this project
+> practises is a **one-way separation of roles**: those who have read that code
+> may write specification text, but may not write the Apache-2.0 reference
+> implementation. Calling this a clean room would misdescribe it — and a
+> provenance notice that misdescribes its own process is worthless.
 
 This document records how the DSX specification was developed, what sources
 were consulted, and what boundaries apply to contributors. It exists so that

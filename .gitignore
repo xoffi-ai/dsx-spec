@@ -8,7 +8,8 @@ __pycache__/
 node_modules/
 
 # Third-party fixture files are GPL-licensed and are NOT redistributed here.
-# tools/observe_skyb.py fetches/reads them from their upstream location.
+# tools/observe_skyb.py reads them from a local path you supply; it never
+# fetches anything, because the toolchain must work air-gapped.
 *.skyb
 *.skyc
 fixtures/

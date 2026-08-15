@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://dsx-format.org/schema/0.1/dsx.schema.json",
+  "$id": "urn:dsx:schema:0.1:dsx",
   "title": "DSX Show Manifest (show.json)",
   "description": "v0.1-draft. Covers the core manifest. Payload, termination and integrity objects are referenced sub-schemas.",
   "type": "object",
@@ -12,7 +12,7 @@
     "time",
     "drones"
   ],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
     "dsx": {
       "type": "string",
@@ -36,8 +36,12 @@
           "type": "string"
         },
         "duration_ms": {
-          "type": "integer",
-          "minimum": 0
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "null ONLY for open-ended shows; then 'open_ended' is REQUIRED (R10.24)."
         },
         "acts": {
           "type": "array",
@@ -59,8 +63,19 @@
               "to_ms": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "audio": {
@@ -71,7 +86,8 @@
           ],
           "properties": {
             "file": {
-              "type": "string"
+              "type": "string",
+              "x-archive-ref": true
             },
             "media_type": {
               "type": "string",
@@ -86,10 +102,36 @@
                 "timecode",
                 "manual"
               ]
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
             }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
           }
+        },
+        "notes": {
+          "type": "string",
+          "description": "free-text note for humans; carries no normative meaning"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "frame": {
       "type": "object",
@@ -160,6 +202,16 @@
             "datum": {
               "type": "string",
               "default": "WGS84"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
             }
           },
           "allOf": [
@@ -185,9 +237,21 @@
                 }
               }
             }
-          ]
+          ],
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "time": {
       "type": "object",
@@ -211,8 +275,19 @@
                 "countdown",
                 "external"
               ]
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "timecode": {
           "type": "object",
@@ -227,8 +302,19 @@
             },
             "offset_ms": {
               "type": "integer"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "time_source": {
           "type": "object",
@@ -262,18 +348,51 @@
                     "land_in_place",
                     "continue"
                   ]
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "fallback": {
               "enum": [
                 "countdown",
                 "none"
               ]
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
             }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fleet": {
       "type": "array",
@@ -295,7 +414,8 @@
           },
           "device_profile": {
             "type": "string",
-            "description": "relative path inside the archive; external references are not permitted"
+            "description": "relative path inside the archive; external references are not permitted",
+            "x-archive-ref": true
           },
           "device_type_id": {
             "type": "string",
@@ -341,10 +461,32 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
               }
+            },
+            "additionalProperties": false
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
             }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "drones": {
@@ -400,20 +542,34 @@
               },
               "heading_deg": {
                 "type": "number"
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
               }
-            }
+            },
+            "additionalProperties": false
           },
           "trajectory": {
-            "type": "string"
+            "type": "string",
+            "x-archive-ref": true
           },
           "trajectory_sampled": {
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "x-archive-ref": true
           },
           "light": {
-            "type": "string"
+            "type": "string",
+            "x-archive-ref": true
           },
           "yaw": {
             "type": [
@@ -436,7 +592,8 @@
                   "minimum": 0
                 },
                 "device_profile": {
-                  "type": "string"
+                  "type": "string",
+                  "x-archive-ref": true
                 },
                 "device_type_id": {
                   "type": "string",
@@ -467,11 +624,33 @@
                       "channel": {
                         "type": "integer",
                         "minimum": 0
+                      },
+                      "extensions": {
+                        "type": "object",
+                        "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                        "propertyNames": {
+                          "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                        },
+                        "additionalProperties": {
+                          "type": "object"
+                        }
                       }
-                    }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "battery_policy": {
@@ -524,8 +703,19 @@
                     "level": {
                       "type": "integer",
                       "minimum": 0
+                    },
+                    "extensions": {
+                      "type": "object",
+                      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                      "propertyNames": {
+                        "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                      },
+                      "additionalProperties": {
+                        "type": "object"
+                      }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "return_slot": {
                   "type": "object",
@@ -550,8 +740,19 @@
                     "level": {
                       "type": "integer",
                       "minimum": 0
+                    },
+                    "extensions": {
+                      "type": "object",
+                      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                      "propertyNames": {
+                        "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                      },
+                      "additionalProperties": {
+                        "type": "object"
+                      }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "takeoff_ms": {
                   "type": "integer",
@@ -569,7 +770,8 @@
                   ],
                   "properties": {
                     "path": {
-                      "type": "string"
+                      "type": "string",
+                      "x-archive-ref": true
                     },
                     "window_ms": {
                       "type": "array",
@@ -579,8 +781,19 @@
                         "type": "integer",
                         "minimum": 0
                       }
+                    },
+                    "extensions": {
+                      "type": "object",
+                      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                      "propertyNames": {
+                        "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                      },
+                      "additionalProperties": {
+                        "type": "object"
+                      }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "egress": {
                   "type": "object",
@@ -590,7 +803,8 @@
                   ],
                   "properties": {
                     "path": {
-                      "type": "string"
+                      "type": "string",
+                      "x-archive-ref": true
                     },
                     "window_ms": {
                       "type": "array",
@@ -600,17 +814,59 @@
                         "type": "integer",
                         "minimum": 0
                       }
+                    },
+                    "extensions": {
+                      "type": "object",
+                      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                      "propertyNames": {
+                        "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                      },
+                      "additionalProperties": {
+                        "type": "object"
+                      }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "energy_use_s": {
                   "type": "number",
                   "minimum": 0
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
                 }
-              }
+              },
+              "additionalProperties": false
+            }
+          },
+          "group": {
+            "type": "string",
+            "description": "wave group this airframe is stationed in (cyclic mode)"
+          },
+          "slot_index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "index within its wave; binds to role of the same index under role_binding=by_slot_index (R10.16)"
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
             }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "takeoff": {
@@ -644,11 +900,33 @@
               "offset_ms": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
               }
-            }
+            },
+            "additionalProperties": false
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "roles": {
       "type": "array",
@@ -664,10 +942,12 @@
             "type": "string"
           },
           "trajectory": {
-            "type": "string"
+            "type": "string",
+            "x-archive-ref": true
           },
           "light": {
-            "type": "string"
+            "type": "string",
+            "x-archive-ref": true
           },
           "active_ms": {
             "type": "array",
@@ -677,8 +957,79 @@
               "type": "integer",
               "minimum": 0
             }
+          },
+          "loop": {
+            "type": "object",
+            "required": [
+              "period_ms",
+              "continuity"
+            ],
+            "description": "Choreography loop of this role (R10.21).",
+            "properties": {
+              "period_ms": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              },
+              "continuity": {
+                "enum": [
+                  "c0",
+                  "c1"
+                ],
+                "description": "c1 = position and velocity match at the seam"
+              },
+              "tolerance": {
+                "type": "object",
+                "properties": {
+                  "position_m": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "velocity_ms": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                    "propertyNames": {
+                      "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "colour_continuous": {
+                "type": "boolean",
+                "description": "false MUST be explicit: an intended blackout and an accidental jump look identical to a validator"
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "assignments": {
@@ -707,8 +1058,19 @@
           "sortie": {
             "type": "string",
             "description": "reference of the form '<drone id>/<sortie id>'"
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "waves": {
@@ -736,22 +1098,26 @@
           },
           "group": {
             "type": "string"
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "handovers": {
       "type": "array",
-      "description": "Windows in which two waves are airborne simultaneously (R10.4, R10.5).",
+      "description": "Windows in which two waves are airborne simultaneously (R10.6, R10.7).",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "from_wave",
-          "to_wave",
-          "window_ms",
-          "cross_wave_separation_m"
-        ],
         "properties": {
           "id": {
             "type": "string"
@@ -797,23 +1163,85 @@
               "land_in_place",
               "abort_show"
             ]
+          },
+          "cyclic": {
+            "const": true,
+            "description": "cycle-relative template; recurs every wave_cycle.period_ms"
+          },
+          "phase_ms": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "window within one cycle period, not absolute show time"
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
           }
-        }
+        },
+        "oneOf": [
+          {
+            "$comment": "explicit waves",
+            "required": [
+              "id",
+              "from_wave",
+              "to_wave",
+              "window_ms",
+              "cross_wave_separation_m"
+            ],
+            "not": {
+              "required": [
+                "cyclic"
+              ]
+            }
+          },
+          {
+            "$comment": "cyclic template (S10.8)",
+            "required": [
+              "id",
+              "cyclic",
+              "phase_ms",
+              "cross_wave_separation_m"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "from_wave"
+                  ]
+                },
+                {
+                  "required": [
+                    "to_wave"
+                  ]
+                },
+                {
+                  "required": [
+                    "window_ms"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "additionalProperties": false
       }
     },
     "corridors": {
       "type": "array",
-      "description": "Declared ingress/egress paths. Must not intersect an active flight volume (R10.6).",
+      "description": "Declared ingress/egress paths. Must not intersect an active flight volume (R10.8).",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "wave",
-          "type",
-          "polygon",
-          "alt_band_m",
-          "active_ms"
-        ],
         "properties": {
           "id": {
             "type": "string"
@@ -828,7 +1256,8 @@
             ]
           },
           "polygon": {
-            "type": "string"
+            "type": "string",
+            "x-archive-ref": true
           },
           "alt_band_m": {
             "type": "array",
@@ -856,7 +1285,7 @@
           },
           "accepted_risk": {
             "type": "object",
-            "description": "Signed override for R10.6. Absent means the intersection check is binding.",
+            "description": "Signed override for R10.8. Absent means the intersection check is binding.",
             "required": [
               "reason",
               "signature"
@@ -867,10 +1296,89 @@
               },
               "signature": {
                 "type": "object"
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
               }
+            },
+            "additionalProperties": false
+          },
+          "cyclic": {
+            "const": true
+          },
+          "phase_ms": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "group": {
+            "type": "string",
+            "description": "cyclic mode: the launching/landing group role, not a wave id"
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
             }
           }
-        }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "id",
+              "wave",
+              "type",
+              "polygon",
+              "alt_band_m",
+              "active_ms"
+            ],
+            "not": {
+              "required": [
+                "cyclic"
+              ]
+            }
+          },
+          {
+            "required": [
+              "id",
+              "cyclic",
+              "type",
+              "polygon",
+              "alt_band_m",
+              "phase_ms"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "wave"
+                  ]
+                },
+                {
+                  "required": [
+                    "active_ms"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "additionalProperties": false
       }
     },
     "launch_stack": {
@@ -939,13 +1447,46 @@
                   "z": {
                     "type": "number",
                     "minimum": 0
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                    "propertyNames": {
+                      "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
                   }
+                },
+                "additionalProperties": false
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
                 }
               }
-            }
+            },
+            "additionalProperties": false
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "energy": {
       "type": "object",
@@ -984,28 +1525,525 @@
                 "reject_on_exceed",
                 "warn_on_exceed"
               ]
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
             }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "safety": {
-      "type": "object"
+      "type": "object",
+      "description": "Show-wide safety floor. Values here are the limits the whole show is validated against; per-type limits live in the device profile (§5).",
+      "required": [
+        "min_separation_m"
+      ],
+      "properties": {
+        "min_separation_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Minimum permitted centre-to-centre distance between any two aircraft at any instant, in metres. This is the single most safety-critical scalar in the file. A fleet's declared_envelope.min_separation_m MUST NOT be smaller (§5)."
+        },
+        "geofence": {
+          "type": "string",
+          "description": "relative archive path to the show geofence geometry (GeoJSON)",
+          "x-archive-ref": true
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "termination": {
-      "$ref": "termination.schema.json"
+      "$ref": "urn:dsx:schema:0.1:termination"
     },
     "position_integrity": {
-      "type": "object"
+      "description": "GNSS integrity: position AND time (spec 7.4)",
+      "type": "object",
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "required": {
+          "type": "object",
+          "properties": {
+            "min_sats": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_pdop": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max_eph_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "rtk": {
+              "enum": [
+                "none",
+                "float",
+                "fixed"
+              ]
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "degradation_policy": {
+          "description": "what to do as the fix degrades - a policy the aircraft can evaluate alone",
+          "type": "object",
+          "properties": {
+            "rtk_fixed_to_float": {
+              "type": "object",
+              "required": [
+                "action"
+              ],
+              "properties": {
+                "action": {
+                  "enum": [
+                    "continue",
+                    "hold",
+                    "land_in_place",
+                    "coordinated_rth",
+                    "coordinated_rth_if_available_else_land",
+                    "disarm"
+                  ]
+                },
+                "min_separation_scale": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "widen the separation floor while the fix is degraded"
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "rtk_to_single": {
+              "type": "object",
+              "required": [
+                "action"
+              ],
+              "properties": {
+                "action": {
+                  "enum": [
+                    "continue",
+                    "hold",
+                    "land_in_place",
+                    "coordinated_rth",
+                    "coordinated_rth_if_available_else_land",
+                    "disarm"
+                  ]
+                },
+                "min_separation_scale": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "widen the separation floor while the fix is degraded"
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "position_lost": {
+              "type": "object",
+              "required": [
+                "action"
+              ],
+              "properties": {
+                "action": {
+                  "enum": [
+                    "continue",
+                    "hold",
+                    "land_in_place",
+                    "coordinated_rth",
+                    "coordinated_rth_if_available_else_land",
+                    "disarm"
+                  ]
+                },
+                "min_separation_scale": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "widen the separation floor while the fix is degraded"
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "gnss_lost": {
+              "type": "object",
+              "required": [
+                "action"
+              ],
+              "properties": {
+                "action": {
+                  "enum": [
+                    "continue",
+                    "hold",
+                    "land_in_place",
+                    "coordinated_rth",
+                    "coordinated_rth_if_available_else_land",
+                    "disarm"
+                  ]
+                },
+                "min_separation_scale": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "widen the separation floor while the fix is degraded"
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "estimator_trust": {
+          "type": "object",
+          "properties": {
+            "independent_check_required": {
+              "type": "boolean"
+            },
+            "dead_reckoning_budget_s": {
+              "type": "number",
+              "minimum": 0,
+              "description": "how long the estimator may be trusted without a fix"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "interference_policy": {
-      "type": "object"
+      "description": "spec 7.4",
+      "type": "object",
+      "required": [
+        "monitor"
+      ],
+      "properties": {
+        "monitor": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "jamming_state",
+              "spoofing_state",
+              "authentication_state",
+              "agc",
+              "noise_per_ms"
+            ]
+          }
+        },
+        "on_jamming_detected": {
+          "type": "object",
+          "required": [
+            "fleet_action"
+          ],
+          "properties": {
+            "fleet_action": {
+              "enum": [
+                "continue",
+                "hold",
+                "land_in_place",
+                "coordinated_rth",
+                "coordinated_rth_if_available_else_land",
+                "disarm"
+              ]
+            },
+            "notify": {
+              "type": "boolean"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "on_spoofing_detected": {
+          "type": "object",
+          "required": [
+            "fleet_action"
+          ],
+          "properties": {
+            "fleet_action": {
+              "enum": [
+                "continue",
+                "hold",
+                "land_in_place",
+                "coordinated_rth",
+                "coordinated_rth_if_available_else_land",
+                "disarm"
+              ]
+            },
+            "reject_gnss": {
+              "type": "boolean"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "glitch_reset_guard": {
+          "type": "object",
+          "properties": {
+            "max_glitch_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "environment_envelope": {
-      "type": "object"
+      "description": "the conditions the show was cleared for (spec 7.5)",
+      "type": "object",
+      "properties": {
+        "wind_max_ms": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "gust_max_ms": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "temp_min_c": {
+          "type": "number"
+        },
+        "temp_max_c": {
+          "type": "number"
+        },
+        "humidity_max_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "precipitation": {
+          "enum": [
+            "none",
+            "light",
+            "any"
+          ]
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "ground_zones": {
-      "type": "object"
+      "description": "spec 7.5",
+      "type": "object",
+      "properties": {
+        "projection_clearance_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "audience_distance_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "to_m",
+              "type"
+            ],
+            "properties": {
+              "to_m": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "type": {
+                "enum": [
+                  "isolation",
+                  "crew",
+                  "audience",
+                  "public"
+                ]
+              },
+              "extensions": {
+                "type": "object",
+                "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                "propertyNames": {
+                  "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "fall_containment_status": {
+          "enum": [
+            "verified",
+            "unverified",
+            "not_applicable"
+          ],
+          "description": "renamed from disarmed_fall_containment: that name is an OBJECT under termination, and one name with two types is a reader bug waiting to happen"
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "extensions_used": {
       "type": "array",
@@ -1029,19 +2067,158 @@
       "type": "object",
       "properties": {
         "created_by": {
-          "type": "object"
+          "type": "object",
+          "required": [
+            "tool",
+            "version"
+          ],
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC 3339 timestamp"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
         },
         "content_hash": {
           "type": "string",
-          "pattern": "^sha256:[0-9a-f]{64}$"
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "description": "Canonical digest over every archive entry except signature/ (see spec 2.3). MUST be recomputed after any edit."
         },
         "validated_by": {
-          "type": "object"
+          "type": "object",
+          "required": [
+            "tool",
+            "version",
+            "result"
+          ],
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC 3339 timestamp"
+            },
+            "profile": {
+              "enum": [
+                "L0",
+                "L1",
+                "L2"
+              ]
+            },
+            "regulatory_profiles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "result": {
+              "enum": [
+                "pass",
+                "fail",
+                "partial"
+              ]
+            },
+            "scope": {
+              "type": "string",
+              "description": "what was actually checked - a validator that states no scope invites the reader to assume it checked everything"
+            },
+            "report": {
+              "type": "string",
+              "x-archive-ref": true
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
         },
         "signature": {
-          "type": "object"
+          "type": "object",
+          "required": [
+            "alg",
+            "key_id",
+            "file"
+          ],
+          "properties": {
+            "alg": {
+              "enum": [
+                "ed25519"
+              ],
+              "description": "v0.1 registers one algorithm; adding others is a minor version"
+            },
+            "key_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "file": {
+              "type": "string",
+              "x-archive-ref": true,
+              "description": "detached signature over the raw bytes of content_hash"
+            },
+            "public_key": {
+              "type": "string",
+              "x-archive-ref": true,
+              "description": "optional in-archive copy of the verifying key; trust still comes from out-of-band key distribution"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "wave_groups": {
       "type": "array",
@@ -1062,8 +2239,19 @@
             "items": {
               "type": "string"
             }
+          },
+          "extensions": {
+            "type": "object",
+            "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+            "propertyNames": {
+              "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "turnaround": {
@@ -1121,11 +2309,350 @@
                 "charge_time_s": {
                   "type": "number",
                   "exclusiveMinimum": 0
+                },
+                "extensions": {
+                  "type": "object",
+                  "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                  "propertyNames": {
+                    "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
                 }
+              },
+              "additionalProperties": false
+            },
+            "consumable_pools": {
+              "type": "array",
+              "description": "Batteries recirculate, pyro charges do not (R10.20).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "actuator_class",
+                  "count",
+                  "reload_time_s"
+                ],
+                "properties": {
+                  "actuator_class": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "reload_time_s": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "replenished": {
+                    "type": "boolean",
+                    "description": "false = finite stock for the whole show; caps the running time"
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+                    "propertyNames": {
+                      "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "wave_cycle": {
+      "type": "object",
+      "description": "Generative wave declaration for unbounded/continuous rotation (S10.8). Mutually exclusive with 'waves'.",
+      "required": [
+        "period_ms",
+        "order",
+        "first_takeoff_ms",
+        "repeat",
+        "template",
+        "seam"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "period_ms": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "description": "interval between successive launches"
+        },
+        "order": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "round-robin launch order of wave groups; length is NOT capped (R10.15)"
+        },
+        "first_takeoff_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repeat": {
+          "oneOf": [
+            {
+              "const": "indefinite"
+            },
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            }
+          ],
+          "description": "'indefinite' REQUIRES show.duration_ms=null and open_ended (R10.24)"
+        },
+        "template": {
+          "type": "object",
+          "required": [
+            "flight_ms",
+            "ingress_ms",
+            "egress_ms",
+            "role_binding"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "flight_ms": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "takeoff to landed"
+            },
+            "ingress_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "egress_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "role_binding": {
+              "enum": [
+                "by_slot_index",
+                "explicit"
+              ]
+            },
+            "energy_use_s": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
               }
             }
           }
+        },
+        "seam": {
+          "type": "object",
+          "required": [
+            "loop_period_ms",
+            "continuity",
+            "handover_masking"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "loop_period_ms": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "continuity": {
+              "enum": [
+                "c0",
+                "c1"
+              ]
+            },
+            "handover_masking": {
+              "enum": [
+                "aligned",
+                "drifting"
+              ],
+              "description": "aligned REQUIRES masked_window_ms (R10.22)"
+            },
+            "masked_window_ms": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "allOf": [
+            {
+              "$comment": "R10.22 - an aligned handover must name the passage that hides it.",
+              "if": {
+                "properties": {
+                  "handover_masking": {
+                    "const": "aligned"
+                  }
+                },
+                "required": [
+                  "handover_masking"
+                ]
+              },
+              "then": {
+                "required": [
+                  "masked_window_ms"
+                ]
+              }
+            }
+          ]
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         }
+      }
+    },
+    "open_ended": {
+      "type": "object",
+      "description": "An endless show still has to end (R10.24).",
+      "required": [
+        "max_continuous_ms",
+        "limited_by",
+        "drain"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "min_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_continuous_ms": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "description": "hard stop from permit, crew duty or wear - not an estimate"
+        },
+        "limited_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "permit",
+              "crew_duty",
+              "battery_cycles",
+              "airframe_hours",
+              "consumables",
+              "weather_window",
+              "venue_hours"
+            ]
+          }
+        },
+        "drain": {
+          "type": "object",
+          "required": [
+            "trigger",
+            "stop_launching",
+            "roles_release",
+            "duration_ms"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trigger": {
+              "enum": [
+                "operator_command",
+                "scheduled",
+                "permit_expiry"
+              ]
+            },
+            "stop_launching": {
+              "type": "boolean"
+            },
+            "roles_release": {
+              "enum": [
+                "on_cycle_end",
+                "immediate",
+                "staggered"
+              ]
+            },
+            "duration_ms": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "time from drain trigger to fleet on the ground"
+            },
+            "extensions": {
+              "type": "object",
+              "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+              "propertyNames": {
+                "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+              },
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+          "propertyNames": {
+            "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08). A reader MUST preserve entries it does not understand when re-exporting.",
+      "propertyNames": {
+        "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$"
+      },
+      "additionalProperties": {
+        "type": "object"
       }
     }
   },
@@ -1181,7 +2708,7 @@
       }
     },
     {
-      "$comment": "R10.x - rotation pulls in the whole apparatus and is L2 only.",
+      "$comment": "R10.2/R10.9 - rotation pulls in the whole apparatus and is L2 only.",
       "if": {
         "properties": {
           "waves": {
@@ -1233,9 +2760,358 @@
         ]
       },
       "then": {
-        "required": [
-          "waves"
+        "anyOf": [
+          {
+            "required": [
+              "waves"
+            ]
+          },
+          {
+            "required": [
+              "wave_cycle"
+            ]
+          }
         ]
+      }
+    },
+    {
+      "$comment": "S10.8 - 'waves' and 'wave_cycle' are mutually exclusive.",
+      "not": {
+        "required": [
+          "waves",
+          "wave_cycle"
+        ]
+      }
+    },
+    {
+      "$comment": "R10.15/R10.16 - cyclic rotation pulls in the same apparatus and is L2 only.",
+      "if": {
+        "required": [
+          "wave_cycle"
+        ]
+      },
+      "then": {
+        "required": [
+          "wave_groups",
+          "roles",
+          "handovers",
+          "corridors",
+          "launch_stack",
+          "energy",
+          "turnaround",
+          "termination"
+        ],
+        "properties": {
+          "profile": {
+            "const": "L2"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "R10.24 - indefinite repeat requires an open end and a drain plan.",
+      "if": {
+        "required": [
+          "wave_cycle"
+        ],
+        "properties": {
+          "wave_cycle": {
+            "properties": {
+              "repeat": {
+                "const": "indefinite"
+              }
+            },
+            "required": [
+              "repeat"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "open_ended"
+        ],
+        "properties": {
+          "show": {
+            "properties": {
+              "duration_ms": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "R10.24 - open_ended is meaningless without a null duration.",
+      "if": {
+        "required": [
+          "open_ended"
+        ]
+      },
+      "then": {
+        "properties": {
+          "show": {
+            "properties": {
+              "duration_ms": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "R10.21 - a looping show needs looping roles.",
+      "if": {
+        "required": [
+          "open_ended"
+        ]
+      },
+      "then": {
+        "properties": {
+          "roles": {
+            "items": {
+              "required": [
+                "loop"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "spec 2 - content_hash and signature are OPTIONAL at L0/L1 and REQUIRED at L2.",
+      "if": {
+        "properties": {
+          "profile": {
+            "const": "L2"
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "properties": {
+          "provenance": {
+            "required": [
+              "content_hash",
+              "signature"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$comment": "S10.9 - rotation members MUST be absent at L0/L1.",
+      "if": {
+        "properties": {
+          "profile": {
+            "enum": [
+              "L0",
+              "L1"
+            ]
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "allOf": [
+          {
+            "not": {
+              "required": [
+                "wave_groups"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "waves"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "wave_cycle"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "handovers"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "corridors"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "assignments"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "turnaround"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "open_ended"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "launch_stack"
+              ]
+            }
+          },
+          {
+            "properties": {
+              "drones": {
+                "items": {
+                  "properties": {
+                    "sorties": {
+                      "maxItems": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "profile": {
+            "enum": [
+              "L1",
+              "L2"
+            ]
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "required": [
+          "safety"
+        ]
+      }
+    },
+    {
+      "$comment": "spec 7.6 - disarmed fall containment is a REQUIRED, checkable field at L2",
+      "if": {
+        "properties": {
+          "profile": {
+            "const": "L2"
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "properties": {
+          "termination": {
+            "required": [
+              "disarmed_fall_containment"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$comment": "R10.10 - rotation declares its ground service capacity.",
+      "if": {
+        "anyOf": [
+          {
+            "required": [
+              "wave_cycle"
+            ]
+          },
+          {
+            "properties": {
+              "waves": {
+                "type": "array",
+                "minItems": 2
+              }
+            },
+            "required": [
+              "waves"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "turnaround": {
+            "required": [
+              "ground_service"
+            ],
+            "properties": {
+              "ground_service": {
+                "required": [
+                  "bays",
+                  "throughput_per_min"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "R10.11 - a swap policy declares its battery pool.",
+      "if": {
+        "properties": {
+          "turnaround": {
+            "properties": {
+              "policy": {
+                "const": "swap"
+              }
+            },
+            "required": [
+              "policy"
+            ]
+          }
+        },
+        "required": [
+          "turnaround"
+        ]
+      },
+      "then": {
+        "properties": {
+          "turnaround": {
+            "properties": {
+              "ground_service": {
+                "required": [
+                  "battery_pool"
+                ]
+              }
+            }
+          }
+        }
       }
     }
   ]

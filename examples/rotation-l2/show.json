@@ -30,22 +30,22 @@
     {
       "id": "grp-A",
       "count": 2,
-      "device_profile": "devices/example@aircraft@rev1.dsxp",
-      "device_type_id": "00000000-0000-4000-8000-000000000001",
+      "device_profile": "devices/example-aircraft.dsxp",
+      "device_type_id": "6b1f2a54-9c33-4e17-9a0b-2f7d5c8e4a10",
       "device_mode": "rgb-30hz"
     },
     {
       "id": "grp-B",
       "count": 2,
-      "device_profile": "devices/example@aircraft@rev1.dsxp",
-      "device_type_id": "00000000-0000-4000-8000-000000000001",
+      "device_profile": "devices/example-aircraft.dsxp",
+      "device_type_id": "6b1f2a54-9c33-4e17-9a0b-2f7d5c8e4a10",
       "device_mode": "rgb-30hz"
     },
     {
       "id": "grp-C",
       "count": 2,
-      "device_profile": "devices/example@aircraft@rev1.dsxp",
-      "device_type_id": "00000000-0000-4000-8000-000000000001",
+      "device_profile": "devices/example-aircraft.dsxp",
+      "device_type_id": "6b1f2a54-9c33-4e17-9a0b-2f7d5c8e4a10",
       "device_mode": "rgb-30hz"
     }
   ],
@@ -1084,6 +1084,11 @@
       "land_in_place",
       "disarm"
     ],
+    "coordinated_rth": {
+      "precomputed": true,
+      "recompute_interval_ms": 15000,
+      "cancellable": false
+    },
     "rth_availability": {
       "default_interval_ms": 15000,
       "adaptive": true,
@@ -1208,6 +1213,19 @@
     "created_by": {
       "tool": "dsx-spec example generator",
       "version": "0.1"
+    },
+    "content_hash": "sha256:bb52e11875c14c6aff00593e3809cf3a44d56af5e14b5b4525666bb9bbde72f9",
+    "signature": {
+      "alg": "ed25519",
+      "key_id": "dsx-demo-key-not-for-production",
+      "file": "signature/show.sig",
+      "public_key": "signature/public.key"
+    },
+    "validated_by": {
+      "tool": "conformance/check_rotation.py",
+      "version": "0.1",
+      "result": "pass",
+      "scope": "manifest-level rules of section 10 only; trajectory and light files are not resolved, and loop continuity is checked as a declaration, not against the sampler (A26)"
     }
   },
   "extensions_used": [],

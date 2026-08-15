@@ -12,7 +12,34 @@ coordinates/   altitude reference, handedness, bearing; correct refusal when abs
 determinism/   .dsx -> .dsb byte-identical across runs and platforms (§1.2)
 ```
 
-**Status: empty.** The suite does not exist yet, and until `sampling/` contains
+## What exists today
+
+Three suites, all offline. `$ref` resolution uses a local registry, because a
+validator that reaches the network cannot be used on an air-gapped show site.
+
+```
+python3 conformance/run_schema_checks.py    # schema-level
+python3 conformance/check_rotation.py       # semantic rules of section 10
+python3 conformance/check_archive.py        # archive-level
+```
+
+| Script | What it proves |
+|---|---|
+| `run_schema_checks.py` | the schema accepts the examples and **rejects** every field whose absence causes conversion accidents — including misspelt safety fields, since a closed core is what makes a typo an error instead of a silent deletion (section 8.1.1) |
+| `check_rotation.py` | the semantic rules of section 10 that JSON Schema cannot express: interval coverage, exclusivity, turnaround and energy closure, the steady-state inequalities of 10.8 |
+| `check_archive.py` | the archive around the manifest: every referenced resource is carried (2.1), every track and light file validates against `schema/resource.schema.json` (section 4), `content_hash` recomputes and the signature verifies (2.3.1), and a declared loop actually closes in its own trajectory (R10.21) |
+
+Each script prints its own `n/n passed`. Counts are deliberately not repeated
+here: a number maintained in prose drifts from the number the suite produces,
+and this README already carried two different ones.
+
+Requires `jsonschema`, `referencing` and — for signature verification —
+`cryptography`. A skipped check is reported as SKIP, never as a pass.
+
+## The planned suite
+
+**Status: the directories listed at the top of this file are not written yet.**
+They describe the intended shape of the full suite. Until `sampling/` contains
 vectors, the interoperability guarantee in §1.4 is an intention rather than a
 verifiable property. This is stated plainly because the alternative — implying
 conformance testing that does not exist — is exactly the behaviour this project

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dsx:schema:0.1:resource",
+  "title": "DSX trajectory and light resource",
+  "description": "v0.1-draft. The files referenced by roles[].trajectory, roles[].light, drones[].trajectory, drones[].trajectory_sampled, drones[].light and sorties[].ingress/egress.path. Spec section 4 states these formats normatively; without a schema the normative text was unenforced, and the reference examples themselves went unchecked.",
+  "type": "object",
+  "required": ["kind"],
+  "oneOf": [
+    { "$ref": "#/$defs/segments" },
+    { "$ref": "#/$defs/sampled" },
+    { "$ref": "#/$defs/light_program" }
+  ],
+  "$defs": {
+    "extensions": {
+      "type": "object",
+      "description": "Vendor extension payloads, keyed by the prefixed extension name (see spec/08).",
+      "propertyNames": { "pattern": "^[A-Z][A-Z0-9]+_[A-Za-z0-9_]+$" },
+      "additionalProperties": { "type": "object" }
+    },
+    "point": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "x, y, z in metres in the show frame (section 3)"
+    },
+    "segments": {
+      "type": "object",
+      "required": ["kind", "interp", "start_ms", "segments"],
+      "properties": {
+        "kind": { "const": "segments" },
+        "interp": { "enum": ["constant", "linear", "bezier", "poly"] },
+        "start_ms": { "type": "integer", "minimum": 0 },
+        "start_point": {
+          "$ref": "#/$defs/point",
+          "description": "position at start_ms. REQUIRED for a track whose first segment is relative to it, and the only way a closed loop can be checked at the seam."
+        },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["dt_ms", "type", "p"],
+            "properties": {
+              "dt_ms": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "description": "integer milliseconds; durations MUST be contiguous (section 4.2)"
+              },
+              "type": { "enum": ["constant", "linear", "bezier", "poly"] },
+              "p": { "$ref": "#/$defs/point" },
+              "c1": { "$ref": "#/$defs/point" },
+              "c2": { "$ref": "#/$defs/point" },
+              "coeffs": {
+                "type": "array",
+                "items": { "type": "array", "items": { "type": "number" } }
+              },
+              "yaw_deg": { "type": "number" },
+              "extensions": { "$ref": "#/$defs/extensions" }
+            },
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$comment": "section 4.2: a bezier segment without control points is not a bezier segment",
+                "if": { "properties": { "type": { "const": "bezier" } }, "required": ["type"] },
+                "then": { "required": ["c1", "c2"] }
+              },
+              {
+                "if": { "properties": { "type": { "const": "poly" } }, "required": ["type"] },
+                "then": { "required": ["coeffs"] }
+              }
+            ]
+          }
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "sampled": {
+      "type": "object",
+      "required": ["kind", "rate_hz", "interp", "time_semantics", "t0_ms", "data"],
+      "properties": {
+        "kind": { "const": "sampled" },
+        "rate_hz": { "type": "number", "exclusiveMinimum": 0 },
+        "interp": { "enum": ["hold", "linear", "cubic"] },
+        "time_semantics": {
+          "enum": ["at_sample", "until_next", "since_previous"],
+          "description": "REQUIRED, no default (section 4.3). At least one published format encodes the delta as the interval ENDING at the sample; an importer that assumes otherwise is off by one sample across the whole show."
+        },
+        "t0_ms": { "type": "integer", "minimum": 0 },
+        "data": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/point" }
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "light_program": {
+      "type": "object",
+      "required": ["kind", "channels", "color_space", "ops"],
+      "properties": {
+        "kind": { "const": "light_program" },
+        "channels": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["R", "G", "B", "W", "UV", "STROBE", "INTENSITY"] },
+          "description": "MUST be a subset of the bound device mode's channels (section 4.5)"
+        },
+        "color_space": { "enum": ["sRGB", "linear", "device"] },
+        "ops": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["t_ms", "op"],
+            "properties": {
+              "t_ms": { "type": "integer", "minimum": 0 },
+              "op": { "enum": ["set", "fade", "strobe"] },
+              "dur_ms": { "type": "integer", "minimum": 0 },
+              "rgb": {
+                "type": "array",
+                "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "channels": {
+                "type": "object",
+                "propertyNames": { "enum": ["R", "G", "B", "W", "UV", "STROBE", "INTENSITY"] },
+                "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 255 }
+              },
+              "hz": { "type": "number", "exclusiveMinimum": 0 },
+              "duty": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+              "extensions": { "$ref": "#/$defs/extensions" }
+            },
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": { "properties": { "op": { "const": "fade" } }, "required": ["op"] },
+                "then": { "required": ["dur_ms"] }
+              },
+              {
+                "$comment": "section 4.5: a strobe without a rate is not reproducible",
+                "if": { "properties": { "op": { "const": "strobe" } }, "required": ["op"] },
+                "then": { "required": ["hz", "dur_ms"] }
+              }
+            ]
+          }
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    }
+  }
+}
