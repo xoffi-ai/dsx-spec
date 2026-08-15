@@ -112,11 +112,12 @@ one produces the wrong design:
 | Flight termination | an attacker **prevents** a legitimate shutdown | authenticity and availability; termination must not be blockable |
 | Payload firing (pyro, flame, release) | an attacker **causes** an illegitimate discharge | access control; per-show key, arm state required |
 
-Public evidence supports exactly this asymmetry: encrypted, addressed firing
-systems are documented for pyrotechnic ignition, while the flight control link
-of at least one major show platform was unencrypted until recently. An
-unauthorised flight kill drops an aircraft; an unauthorised discharge injures
-people on the ground.
+The asymmetry is not symmetric in consequence: an unauthorised flight kill
+drops an aircraft; an unauthorised discharge injures people on the ground.
+Encrypted, addressed firing systems are documented in the pyrotechnic domain,
+whereas link encryption is **not** uniformly present in show flight-control
+systems — which is why DSX requires payload authentication at L2 and does not
+require it of the flight channel.
 
 DSX therefore requires payload authentication at L2 but does **not** claim that
 encrypted flight control is current practice. Requiring it would make every

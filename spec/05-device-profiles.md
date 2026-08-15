@@ -124,8 +124,8 @@ authoring tool. The validator's job is then a comparison, not a simulation.
 
 ## 5.6 Error semantics — three levels
 
-This separation does not exist in any current format, and it is the reason DSX
-can be used as a gate rather than as a hint.
+This separation was not found in any of the formats surveyed in Appendix B, and
+it is the reason DSX can be used as a gate rather than as a hint.
 
 | Level | Trigger | Required behaviour |
 |---|---|---|

@@ -53,6 +53,14 @@ Rules:
 
 - Show time is **integer milliseconds** from `t = 0`. Frame rate is a property
   of *sampling*, never of the data (§4).
+- **Interval convention.** Every time interval in DSX — every `*_ms` pair,
+  every `[from_ms, to_ms]`, `active_ms`, `serves_ms`, `window_ms` and every
+  `windows[]` entry — is **half-open**: `[from, to)`. The start instant belongs
+  to the interval, the end instant does not. Two intervals that share an
+  endpoint (`[0, 435000)` and `[435000, 855000)`) are therefore **contiguous,
+  not overlapping**, and together they cover `[0, 855000)` without a gap.
+  Readers and validators MUST use this convention; without it, rules that
+  forbid gaps *and* overlaps at the same time (R10.1) cannot be satisfied.
 - `time_source` exists because of a structural property of the state of the
   art: in a typical implementation the show clock and the position solution
   come from **the same GNSS receiver**. Loss of GNSS therefore costs the

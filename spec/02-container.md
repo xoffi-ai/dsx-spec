@@ -50,6 +50,10 @@ Device profiles referenced by the show **MUST** be embedded in the archive
 
   "safety": { … },             // §7 — REQUIRED for L1 and L2
   "termination": { … },        // §7 — REQUIRED for L2
+  "position_integrity":   { … },  // §7.4 — GNSS/RTK quality and degradation policy
+  "interference_policy":  { … },  // §7.4 — jamming/spoofing monitoring
+  "environment_envelope": { … },  // §7.5 — wind, temperature, humidity limits
+  "ground_zones":         { … },  // §7.5 — cleared areas, fall containment
 
   // §10 — only for shows that rotate aircraft through the air.
   // Present as a group or not at all: "roles" without "assignments" is
@@ -94,7 +98,8 @@ member the schema does not define is an error, not an extension (§8.1.1).
 A show file is a safety-relevant artefact that is submitted to authorities,
 insurers and clients. Recording **who validated it, with which tool version,
 against which regulatory profile, with what result** is therefore part of the
-file — not an email attachment. No existing format does this.
+file — not an email attachment. None of the formats surveyed in Appendix B
+carries this.
 
 `content_hash` and `signature` are OPTIONAL at L0/L1 and REQUIRED at L2.
 

@@ -6,6 +6,15 @@ flight-capable and machine-validatable, not just viewable.**
 > **Status: `v0.1-draft`.** Nothing here is stable. This is published early and
 > in public *on purpose*: to be reviewed, contradicted and improved by the people
 > who actually fly shows. See [GOVERNANCE.md](GOVERNANCE.md).
+>
+> **You cannot write a reader from this draft yet.** An external review on
+> 2026-08-15 established that §4.2/§4.3 do not yet pin down the two central data
+> structures — the segment track and the sampled array — so even the simplest
+> profile (L0) is not implementable from the prose alone
+> ([A31](spec/A-open-questions.md), [A32](spec/A-open-questions.md)). The safety,
+> device-profile and rotation models are complete and machine-checked; the wire
+> format is the gap, and it is the next thing to be written. Saying so here is
+> cheaper than letting an implementer discover it.
 
 ---
 

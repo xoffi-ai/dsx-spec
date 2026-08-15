@@ -13,7 +13,18 @@ converged on the same four rungs, which DSX adopts as normative vocabulary:
 | `disarm` | motors off | no — last resort |
 
 **One action per rung.** Each rung MUST be triggerable by a **single operator
-action**. This is stated normatively because of a documented accident in which
+action**.
+
+> **Scope note (normative).** This is a requirement on the *operating system* —
+> the ground station and its interface — not on the file, and §1.1 places
+> ground-station behaviour outside what DSX specifies. It is therefore **not
+> verifiable by `conformance/`**, which tests files and readers. It is stated
+> here because the vocabulary above is worthless if the rungs cannot be reached
+> in time, and it is the one requirement in this document addressed to
+> integrators rather than to files. A file-level, checkable representation
+> (declaring the action count per rung) is an open question — see A29.
+
+This is stated normatively because of a documented accident in which
 aircraft were already falling and the pilot did not abort — the reported reason
 being the number of steps involved in pausing the show, which made continuing
 appear to be the safer option. A termination path that is too cumbersome to use
@@ -91,7 +102,7 @@ it is a position and colour track and nothing more (§9).
 ```
 
 REQUIRED members of `termination`: `channel`, `escalation`, `geofence` and
-`link_loss`. At **L2**, `disarmed_fall_containment` is REQUIRED as well (§7.6),
+`link_loss`. At **L2**, `disarmed_fall_containment` is REQUIRED as well (§7.5),
 and naming a rung in `escalation` obliges the file to define the object that
 configures it — an escalation ladder with an undefined rung is a ladder with a
 missing step.
@@ -200,11 +211,22 @@ maximum image area** that must be clear of people — a geometry that is
 computable directly from the choreography, and one that at least one
 jurisdiction specifies numerically.
 
-**`disarmed_fall_containment`** is a REQUIRED, checkable field at L2: the
-safety area MUST contain the ballistic trajectory of a disarmed aircraft from
-**every** position the show reaches. Operational documentation in the industry
-already assumes this; no format has held it as verifiable data. Where payloads
-are present, `hazard.debris_fallout_m` (§6) enters the same computation.
+**`disarmed_fall_containment`** is REQUIRED at L2. The safety area MUST contain
+the fall trajectory of a disarmed aircraft from **every** position the show
+reaches. Where payloads are present, `hazard.debris_fallout_m` (§6) enters the
+same computation.
+
+> **What `v0.1` requires, and what it does not.** DSX does **not** yet define
+> the fall model — drag, tumbling, mass and area assumptions and the wind case
+> are not specified, so two validators can legitimately reach different
+> verdicts on the same geometry. Until a model is specified (A30), the
+> **checkable** obligation is one of disclosure, not of geometry: the file MUST
+> record `model`, the tool and version that computed it, the wind case used,
+> and the result — and a reader MUST NOT report the containment as verified
+> when `verified: false`. A declared, attributable, falsifiable claim is worth
+> more than a number whose derivation nobody can reproduce; claiming a
+> geometric guarantee the specification cannot yet define would be exactly the
+> behaviour this project exists to replace.
 
 Audience are **uninvolved persons** for risk-assessment purposes; this cannot
 be defined away organisationally and must be carried geometrically.

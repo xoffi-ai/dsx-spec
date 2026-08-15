@@ -1,15 +1,21 @@
 # 10. Waves, Sorties and Rotation Operation
 
-> Status: v0.1-draft. No prior art exists in any published or observed show
-> format for the functionality described in this section.
+> Status: v0.1-draft. No prior art for the functionality described in this
+> section was found in the formats surveyed in Appendix B. Formats for which no
+> sample could be obtained (A28) were not assessed.
 
 ## 10.1 The problem
 
-Every show format examined during the development of DSX — `.skyc`, Skybrush
-CSV, `.dac`, `.path` / `.path3`, Drotek JSON, VVIZ — models exactly **one**
-takeoff and **one** landing for the entire fleet. The identity of an aircraft
-and its place in the choreography are the same thing: drone *n* flies
+Of the formats for which a sample or a public specification was actually
+obtained — `.skyc` / `.skyb` (Appendix B.1), Skybrush CSV, VVIZ — none models
+more than **one** takeoff and **one** landing per airframe. The identity of an
+aircraft and its place in the choreography are the same thing: drone *n* flies
 trajectory *n*, from the ground, back to the ground, once.
+
+For `.dac`, `.bin`, `.path` / `.path3` and Drotek JSON **no sample was
+obtained** (A28), so nothing is claimed about them here. If any of them does
+model aircraft rotation, this section is wrong and the correction is welcome —
+see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
 
 That model has a hard ceiling: **the show can never be longer than one battery
 charge.**
@@ -245,11 +251,14 @@ ingress_s + served_s + egress_s  <=  budget_s * (1 - reserve_pct / 100)
 fraction that MUST remain unflown at landing. A validator MUST reject a file in
 which any sortie exceeds this allowance.
 
-**Rule R10.13 — Energy is per sortie, not per model.** Endurance is a property
-of this airframe with this battery at this temperature, declared on the sortie
-or the airframe — never on the device profile (`.dsxp`). The profile declares
-what the type is *capable* of; the show declares what this unit is *planned* to
-do. This is the same capability/intent split as §5, and violating it is how a
+**Rule R10.13 — Planned energy is per sortie, not per model.** Endurance in
+practice is a property of *this* airframe, with *this* battery, at *this*
+temperature. The device profile MAY declare `endurance_s` as a **type
+capability** (§5.3) — that is what the profile is for — but a planner or
+validator **MUST NOT** take the planned energy budget of a sortie from it. The
+budget MUST come from `energy.per_sortie` or from the airframe. The profile
+declares what the type is *capable* of; the show declares what this unit is
+*planned* to do. This is the same capability/intent split as §5, and violating it is how a
 designer silently writes flight limits larger than the hardware supports.
 
 ```jsonc
@@ -541,7 +550,7 @@ Rotation operation is an **L2 (Production)** feature.
 |---|---|
 | L0 / L1 | `wave_groups`, `waves`, `wave_cycle`, `handovers`, `corridors`, `assignments`, `turnaround`, `open_ended` MUST be absent; each airframe has at most one sortie |
 | L2, explicit waves | ALL of R10.1 – R10.14 apply |
-| L2, cyclic (`wave_cycle`) | R10.2, R10.4, R10.6 – R10.8, R10.13, R10.14 and R10.15 – R10.24 apply; the enumerated rules R10.1, R10.3, R10.5, R10.9 – R10.12 are discharged by their steady-state equivalents. R10.2 applies because the template owns ingress/egress exactly as a sortie does; R10.13 applies because endurance is still declared per airframe, never on the device profile; R10.14 applies because derived sorties occupy slots over intervals across all cycles |
+| L2, cyclic (`wave_cycle`) | R10.2, R10.4, R10.6 – R10.8, R10.13, R10.14 and R10.15 – R10.24 apply; the enumerated rules R10.1, R10.3, R10.5, R10.9 – R10.12 are discharged by their steady-state equivalents. R10.2 applies because the template owns ingress/egress exactly as a sortie does; R10.13 applies because the planned energy budget is still taken per airframe, never from the device profile; R10.14 applies because derived sorties occupy slots over intervals across all cycles |
 
 `waves` and `wave_cycle` MUST NOT both be present. `wave_cycle` with
 `repeat: "indefinite"` REQUIRES `show.duration_ms: null` and `open_ended`

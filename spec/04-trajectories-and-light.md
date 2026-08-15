@@ -89,8 +89,8 @@ Consequences of binding light to the device profile:
   three-channel fleet is a **declared, detectable** mismatch (§5.6), not a
   silently wrong colour.
 - Gamma, dimming curve and PWM frequency belong to the **device**, not the show.
-  No current format carries them, which is why the same show looks different on
-  different hardware.
+  None of the formats surveyed in Appendix B carries them, which is why the same
+  show looks different on different hardware.
 - White-channel derivation (when a target has W and the source does not, or
   vice versa) is a reader-side mapping governed by the profile — not an
   exporter-side hack.

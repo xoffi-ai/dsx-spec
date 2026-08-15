@@ -44,9 +44,17 @@ than silently ignore data it does not understand.
 
 ## 1.4 The interoperability guarantee
 
-> Every conforming `.dsx` file **MUST** be reducible, by the normative sampling
-> algorithm of §4.4, to `t, x, y, z, R, G, B` at any requested frame rate,
-> producing bit-identical results in every conforming implementation.
+> Every conforming `.dsx` file with a non-null `show.duration_ms` **MUST** be
+> reducible, by the normative sampling algorithm of §4.4, to `t, x, y, z, R, G, B`
+> at any requested frame rate, producing bit-identical results in every
+> conforming implementation.
+
+**Known limits of this guarantee in `v0.1`, stated here rather than only in an
+appendix:** reduction of an open-ended show (`duration_ms: null`, §10.8) is
+**undefined** — §4.4 derives the sample count from the duration (A25). And the
+normative test vectors that would make "bit-identical" verifiable **do not yet
+exist** (A1); until they are published, this section states an intention, not a
+demonstrated property.
 
 This is the property that makes DSX adoptable. A manufacturer whose hardware
 consumes fixed-rate frame arrays does not need to implement polynomial
