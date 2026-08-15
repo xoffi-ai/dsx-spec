@@ -3,6 +3,18 @@
 ## Unreleased
 
 ### Changed (licensing and trademark round)
+
+- **Trademark risk corrected downward (A15 resolved).** The previous round
+  treated the crowded "DSX" register as an obstacle to publishing. It is not.
+  Infringement requires use of a sign *in the course of trade as an indicator
+  of commercial origin*; naming a format, defining an extension and publishing
+  a specification is technical use, on the same footing as `.zip`, `.json` and
+  `.csv`. The register findings are retained as background — they establish
+  only that the project could never *own* the letters DSX, which it does not
+  need to. No registration will be sought for "DSX"; the sole future
+  registration is the separately coined certification mark, deferred until a
+  conformance programme exists. `TRADEMARK.md` §0 states the distinction that
+  the earlier analysis omitted.
 - **Specification licence is now the Community Specification License 1.0**
   (SPDX `Community-Spec-1.0`), reproduced verbatim in
   `licenses/Community-Spec-1.0.md`. This is the *third* attempt and the first
@@ -31,7 +43,7 @@
   software, computer programs and electronic publications (classes 9, 35, 36,
   42) — plus incontestable US Reg. 2679754 in class 9, generic use of DSX-1/
   DSX-3 in telecoms, and four unrelated formats already using the `.dsx`
-  extension. **China was not verifiable and is the urgent gap.** Documents no
+  extension. **China was not verifiable; deferred, since it blocks nothing.** Documents no
   longer assert rights in "the name DSX, the DSX logo, or the DSX conformance
   badge"; none of those rights exist. The proposed split follows the IEEE
   802.11 / Wi-Fi precedent: leave the format name unprotected, coin and

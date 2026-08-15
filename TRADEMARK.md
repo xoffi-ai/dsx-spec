@@ -1,16 +1,49 @@
 # Trademark status and naming policy
 
-**Status: the project holds no registered trademark anywhere. "DSX" is a
-crowded acronym with at least one live word mark covering software and
-electronic publications in the EU. This document records what was found, what
-was not checked, and what follows.**
+**Status: the project holds no registered trademark anywhere, needs none to
+publish the specification under the name DSX, and has no plan to apply for one.
+The only place a mark would do real work is the conformance badge, and that is
+a later decision with a different name.**
 
 Search date: 2026-08-15. Searcher: project maintainers, not counsel. This is a
 knock-out search, not a clearance opinion.
 
 ---
 
-## 1. What was found
+## 0. Does a file format need a trademark? No.
+
+This document originally overstated the risk, and the overstatement came from
+one omission: it never distinguished **trademark use** from **technical use**.
+
+A trademark is infringed by using a sign **in the course of trade as an
+indicator of commercial origin**, in a way likely to confuse the relevant
+public. Naming a data format, defining a file extension and publishing a
+specification is none of those things. It is a technical designation, the same
+way `.zip`, `.json`, `.csv`, `.png` and `.yaml` are — none of which is anyone's
+trademark, and all of which coexist with unrelated registrations of the same
+letters.
+
+Concretely, the following carry **no meaningful trademark exposure**:
+
+- calling the format DSX and the extension `.dsx`
+- registering the media type `application/vnd.dsx+zip`
+- schema `$id`s under `urn:dsx:…`
+- naming the reference tooling `dsx-tools`, because referring to a format by its
+  name is descriptive/nominative use, not branding
+- a third party writing "imports and exports DSX" on their product
+
+Exposure begins only where the letters are used **as a brand for goods or
+services sold in trade** — a product marketed as "DSX", a paid certification
+sold under that name, a logo positioned as a badge of origin. That is a
+different activity from publishing a standard, and this project is not doing it.
+
+The findings in §1 are therefore recorded as **background**, not as an
+obstacle. They matter for one decision only: whether the project could ever
+*own* the letters DSX. It cannot, and it does not need to.
+
+---
+
+## 1. What was found (background)
 
 ### 1.1 Live registrations for the bare word "DSX"
 
@@ -79,7 +112,9 @@ and collide with nothing. That was the right call and it stays.
 ## 2. What was NOT checked
 
 **China — not verified.** CNIPA's register was not reachable by the means
-available here. This is the most important gap and the most urgent:
+available here. This is the largest gap in the search. It is **not** a blocker
+on publishing, for the reasons in §0 — it becomes relevant only if the project
+later wants to own a name in China:
 
 - China is **first-to-file** with no use requirement to register, and trademark
   squatting on foreign brands is routine.
@@ -150,22 +185,33 @@ cancelled if applied discriminatorily. That fits a neutral steward exactly, and
 it makes the neutrality claim in `GOVERNANCE.md` legally enforceable rather than
 merely stated.
 
-### 3.4 Recommended immediate actions
+### 3.4 Recommended actions
 
-1. **Commission a Chinese knock-out search for "DSX" in classes 9 and 42**
-   before any public announcement. In Shenzhen this is inexpensive and fast, and
-   it is the single finding most likely to change the plan.
+**Now, before publishing:**
+
+1. **Keep the name DSX and do nothing else.** Per §0, publishing a
+   specification under a technical designation is not trademark use, and the
+   registrations in §1 are not enforceable against it. The cost of proceeding
+   is zero and there is nothing to buy.
 2. **Do not assert trademark rights in project documents.** Corrected in this
    repository as of this commit; see §4.
-3. **Coin the certification-programme name separately**, and clear that name
+3. **Register `dsx-format.org`** (free as of the search date) — a domain, not a
+   mark. Cheap, and it stops someone else from taking the obvious home of the
+   documentation.
+
+**Later, when the conformance programme becomes real:**
+
+4. **Coin the certification-programme name separately** and clear *that* name
    properly — a coined word in an empty field is cheap to clear and strong to
-   own, which is the opposite of the situation with "DSX".
-4. **Register `dsx-format.org`** (free as of the search date) if the name is
-   kept, so that the schema `$id` and documentation have a stable home that is
-   not squattable.
-5. **Reassess whether to keep "DSX" at all** once the Chinese result is in.
-   Renaming is cheap now — nothing is published, no external implementer
-   exists. It becomes expensive the moment either changes.
+   own, which is the opposite of the situation with "DSX". This is the only
+   registration the project should ever pay for.
+5. **Run a Chinese knock-out search** at that point, in classes 9 and 42, for
+   the coined name. Searching "DSX" itself is optional and mostly of academic
+   interest — the project will not be applying for it either way. The one
+   residual reason to look is squatting: if a Chinese party holds DSX in class
+   9, a manufacturer might get nervous about putting the word in its own
+   marketing, which is a soft commercial friction, not a legal exposure for
+   this project.
 
 ---
 

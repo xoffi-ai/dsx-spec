@@ -96,7 +96,7 @@ tools/         observe_skyb.py — byte-level inspection used to write Appendix 
 |---|---|---|
 | Specification, schemas, examples, device profiles | **Community Specification License 1.0** (`Community-Spec-1.0`) | its patent grant covers *implementing* the specification (§9.8), which is the whole point and which a software licence does not reliably give |
 | Code, reference tools, conformance suite | **Apache-2.0** | embeddable in proprietary firmware; patent grant whose scope genuinely fits code |
-| The name "DSX" and the conformance badge | **no trademark is held — see [`TRADEMARK.md`](TRADEMARK.md)** | anyone may implement; conformance is defined by the public suite, not by a mark we do not own |
+| The name "DSX" and the `.dsx` extension | **no trademark held, and none needed — see [`TRADEMARK.md`](TRADEMARK.md)** | a format name is a technical designation, like `.zip` or `.json`; anyone may implement, and conformance is defined by the public suite rather than by a mark |
 
 Two related files are operative, not commentary: [`SCOPE.md`](SCOPE.md) bounds
 the patent commitment, [`NOTICES.md`](NOTICES.md) is where implementers accept
