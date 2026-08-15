@@ -3,8 +3,7 @@
 | Directory | Profile | Shows |
 |---|---|---|
 | `minimal-l0/` | L0 | the smallest valid DSX: mandatory frame + time, two sampled aircraft |
-| `show-l1/` | L1 | *(to be written)* segment trajectories, device binding, geofence, RTH |
-| `pyro-l2/` | L2 | *(to be written)* payloads, termination, provenance signature |
+| `show-l1/` | L1 | the reference L1 show: 8 aircraft, segment trajectories, light programs, flight limits, soft + hard geofence, takeoff grid, RTH, device binding — and nothing above L1 |
 | `rotation-l2/` | L2 | enumerated rotation: 42 min from 6 aircraft flying 450 s sorties (§10.1–§10.7) |
 | `continuous-l2/` | L2 | **indefinite** show: `wave_cycle`, steady-state closure, drain plan (§10.8) |
 
@@ -14,9 +13,20 @@ Each example directory is the **unzipped content** of a `.dsx` file. To build on
 cd minimal-l0 && zip -r ../minimal-l0.dsx .
 ```
 
-Both L2 examples carry their device profile (`devices/example-aircraft.dsxp`)
-inside the example directory, because a `.dsx` that references a profile it
-does not carry is invalid (§2).
+`show-l1/` and both L2 examples carry their device profile
+(`devices/example-aircraft.dsxp`) inside the example directory, because a
+`.dsx` that references a profile it does not carry is invalid (§2).
+
+`show-l1/` is the one to read first if you are writing an importer: it is the
+profile most implementations target, it is small enough to check by hand, and
+its trajectories are C¹ at every joint. That last point is deliberate. §4.2.2
+forbids re-parameterising a segment at playback, so a corner between two
+segments is a real velocity step that the aircraft has to absorb; the climb,
+transit and descent control points are placed to match the circle's tangent
+instead. Its `declared_envelope` is not written by hand either —
+`tools/build_examples.py` measures it from the generated tracks and refuses to
+build the example if any axis exceeds the bound device profile, or if the
+closest approach between two aircraft falls below `safety.min_separation_m`.
 
 Every example is a **complete archive**: each referenced trajectory, light,
 geometry and audio resource is carried inside it, because §2.1 makes a show

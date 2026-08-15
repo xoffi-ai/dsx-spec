@@ -437,13 +437,27 @@ def binding(name, show_rel):
             bad.append(f"mode {fl.get('device_mode')} not in profile")
         env = fl.get("declared_envelope", {})
         lim = prof.get("flight", {})
-        if env.get("peak_speed_xy_ms") and lim.get("max_speed_xy_ms") and \
-                env["peak_speed_xy_ms"] > lim["max_speed_xy_ms"]:
-            bad.append(f"declared {env['peak_speed_xy_ms']} m/s exceeds "
-                       f"profile limit {lim['max_speed_xy_ms']} m/s")
+        # Every axis, not just xy: a show that climbs faster than the airframe
+        # may is exactly as unflyable as one that flies sideways too fast, and
+        # checking one axis only made the other four look enforced.
+        for e, l, unit in (("peak_speed_xy_ms", "max_speed_xy_ms", "m/s"),
+                           ("peak_speed_z_up_ms", "max_speed_z_up_ms", "m/s"),
+                           ("peak_speed_z_down_ms", "max_speed_z_down_ms", "m/s"),
+                           ("peak_accel_xy_ms2", "max_accel_xy_ms2", "m/s2"),
+                           ("peak_accel_z_ms2", "max_accel_z_ms2", "m/s2"),
+                           ("peak_yaw_rate_dps", "max_yaw_rate_dps", "deg/s")):
+            if env.get(e) and lim.get(l) and env[e] > lim[l]:
+                bad.append(f"declared {e}={env[e]} {unit} exceeds profile "
+                           f"{l}={lim[l]} {unit}")
+        # 7.1: the show-wide floor is a floor, not a suggestion.
+        floor = d.get("safety", {}).get("min_separation_m")
+        if floor and env.get("min_separation_m") and env["min_separation_m"] < floor:
+            bad.append(f"fleet {fl.get('id')} declares min_separation_m "
+                       f"{env['min_separation_m']} below safety floor {floor}")
     results.append((not bad, name, "; ".join(bad)))
 
 
+binding("L1 example: device binding resolves", "examples/show-l1/show.json")
 binding("rotation example: device binding resolves", "examples/rotation-l2/show.json")
 binding("continuous example: device binding resolves", "examples/continuous-l2/show.json")
 

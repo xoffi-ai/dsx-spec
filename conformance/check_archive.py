@@ -266,8 +266,9 @@ def check_loop_detects_break(base):
 
 
 def main():
-    for name in ("minimal-l0", "rotation-l2", "continuous-l2"):
-        base = ROOT / "examples" / name
+    # Discovered, not listed: a hand-maintained list is how a new example ends
+    # up shipping unchecked, which is exactly what happened to show-l1.
+    for base in sorted((ROOT / "examples").iterdir()):
         if not (base / "show.json").exists():
             continue
         check_complete(base)

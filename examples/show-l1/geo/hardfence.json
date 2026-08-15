@@ -1,0 +1,42 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "hard fence - breach disarms",
+        "alt_band_m": [
+          0,
+          80
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              114.0571219,
+              22.54238135
+            ],
+            [
+              114.0586781,
+              22.54238135
+            ],
+            [
+              114.0586781,
+              22.54381865
+            ],
+            [
+              114.0571219,
+              22.54381865
+            ],
+            [
+              114.0571219,
+              22.54238135
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
